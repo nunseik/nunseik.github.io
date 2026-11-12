@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-ux-review",
+  "private": true,
+  "type": "module",
+  "description": "UX reviewer driver (Playwright), local only",
+  "dependencies": {
+    "@playwright/test": "1.64.0",
+    "axe-core": "4.14.0"
+  }
+}
