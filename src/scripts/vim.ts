@@ -41,13 +41,68 @@ function select(i: number) {
   return true;
 }
 
+// ── jumplist (Ctrl-o / Ctrl-i) ───────────────────────────
+// Big in-page jumps are recorded; once the list runs out, fall back to browser history.
+const jumps: number[] = [];
+let jumpAt = 0;
+function markJump() {
+  jumps.length = jumpAt;
+  if (jumps[jumps.length - 1] !== scrollY) jumps.push(scrollY);
+  jumpAt = jumps.length;
+}
+function jumpBack() {
+  if (jumpAt > 0) {
+    if (jumpAt === jumps.length) jumps.push(scrollY);
+    scrollTo({ top: jumps[--jumpAt] });
+  } else history.back();
+}
+function jumpForward() {
+  if (jumpAt < jumps.length - 1) scrollTo({ top: jumps[++jumpAt] });
+  else history.forward();
+}
+
+// ── search (/ ? n N) ─────────────────────────────────────
+let lastSearch = '';
+let hit = -1;
+function matches(q: string) {
+  const out: Range[] = [];
+  const needle = q.toLowerCase();
+  const walk = document.createTreeWalker($('buf'), NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+    const text = (n.textContent || '').toLowerCase();
+    for (let i = text.indexOf(needle); i >= 0; i = text.indexOf(needle, i + needle.length)) {
+      const r = document.createRange();
+      r.setStart(n, i);
+      r.setEnd(n, i + needle.length);
+      out.push(r);
+    }
+  }
+  return out;
+}
+function search(q: string, step: 1 | -1 = 1) {
+  if (!q) return say('E35: No previous regular expression', 'err');
+  if (q !== lastSearch) { lastSearch = q; hit = -1; }
+  const found = matches(q);
+  if (!found.length) return say(`E486: Pattern not found: ${q}`, 'err');
+  hit = (hit + step + found.length) % found.length;
+  const r = found[hit];
+  markJump();
+  const sel = getSelection();
+  sel?.removeAllRanges();
+  sel?.addRange(r);
+  r.startContainer.parentElement?.scrollIntoView({ block: 'center' });
+  say(`/${q}  [${hit + 1}/${found.length}]`, 'ok');
+}
+
 // ── command line ─────────────────────────────────────────
-function openCmd(prefill = '') {
+const prefix = $('cmdprefix');
+function openCmd(prefill = '', lead = ':') {
   cmdline.classList.add('active');
-  mode.textContent = 'COMMAND';
+  mode.textContent = lead === '/' ? 'SEARCH' : 'COMMAND';
   mode.classList.add('cmd');
+  prefix.textContent = lead;
   input.value = prefill;
-  input.focus();
+  input.focus({ preventScroll: true });
 }
 function closeCmd() {
   cmdline.classList.remove('active');
@@ -65,9 +120,10 @@ function findProject(q: string) {
   );
 }
 
+// :q on a page closes that buffer (back to the index); on the index there is nowhere left to go.
 const quitLines = [
-  'E37: No write since last change. (There is no escape. Stay a while.)',
-  'Nice try. You are in vim now. Have a look around first.',
+  'E37: No write since last change. (There is no escape.) Try :e sentinel or press 4 for contact.',
+  'Nice try. You are in vim now. :ls lists the projects, 4 opens about + contact.',
   'Recording @q... just kidding. Try :e sentinel instead.',
 ];
 let quits = 0;
@@ -79,6 +135,7 @@ function run(raw: string) {
   const arg = rest.join(' ');
   switch (cmd) {
     case 'q': case 'q!': case 'qa': case 'wq': case 'x': case 'qa!': case 'wqa':
+      if (location.pathname !== '/') { location.href = '/'; return; }
       say(quitLines[quits++ % quitLines.length], 'err');
       return;
     case 'h': case 'help':
@@ -117,7 +174,7 @@ function run(raw: string) {
       if (/^\d+$/.test(cmd)) {
         const blocks = document.querySelectorAll('.buf > *:not(.nonum):not(.tilde)');
         const target = blocks[Math.max(0, +cmd - 1)];
-        if (target) target.scrollIntoView({ block: 'center' });
+        if (target) { markJump(); target.scrollIntoView({ block: 'center' }); }
         return;
       }
       say(`E492: Not an editor command: ${line}`, 'err');
@@ -127,8 +184,10 @@ function run(raw: string) {
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const v = input.value;
+  const isSearch = prefix.textContent === '/';
   closeCmd();
-  run(v);
+  if (isSearch) search(v.trim() || lastSearch);
+  else run(v);
 });
 input.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { closeCmd(); say(''); }
@@ -146,20 +205,25 @@ addEventListener('keydown', (e) => {
   if (e.ctrlKey) {
     if (e.key === 'd') { scrollBy({ top: innerHeight / 2 }); e.preventDefault(); }
     if (e.key === 'u') { scrollBy({ top: -innerHeight / 2 }); e.preventDefault(); }
+    if (e.key === 'o') { jumpBack(); e.preventDefault(); }
+    if (e.key === 'i') { jumpForward(); e.preventDefault(); }
     return;
   }
 
   const k = e.key;
   if (pending === 'g') {
     pending = '';
-    if (k === 'g') { scrollTo({ top: 0 }); if (items.length) select(0); return; }
+    if (k === 'g') { markJump(); scrollTo({ top: 0 }); if (items.length) select(0); return; }
   }
   switch (k) {
     case ':': e.preventDefault(); openCmd(); break;
+    case '/': e.preventDefault(); openCmd('', '/'); break;
+    case 'n': if (lastSearch) search(lastSearch, 1); else say('E35: No previous regular expression', 'err'); break;
+    case 'N': if (lastSearch) search(lastSearch, -1); else say('E35: No previous regular expression', 'err'); break;
     case '?': help.showModal(); break;
     case 'j': if (!select(sel + 1)) scrollBy({ top: 64 }); break;
     case 'k': if (!select(sel - 1)) scrollBy({ top: -64 }); break;
-    case 'G': scrollTo({ top: document.documentElement.scrollHeight }); if (items.length) select(items.length - 1); break;
+    case 'G': markJump(); scrollTo({ top: document.documentElement.scrollHeight }); if (items.length) select(items.length - 1); break;
     case 'g': pending = 'g'; break;
     case 'Enter': if (sel >= 0 && items[sel]) items[sel].click(); break;
     case '-': {

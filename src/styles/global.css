@@ -4,7 +4,7 @@
   --bg-alt: #151a16;
   --bg-hi: #1d241f;
   --fg: #cfd6c8;
-  --dim: #6f7a6b;
+  --dim: #838e7f; /* ≥4.5:1 on --bg, --bg-alt and --bg-hi */
   --faint: #3a443b;
   --amber: #e5a94a;
   --green: #93c47d;
@@ -258,6 +258,8 @@ img { max-width: 100%; height: auto; display: block; }
   font: inherit;
   font-size: 12.5px;
   padding: 0 1ch;
+  min-width: 32px;
+  min-height: 26px;
   cursor: pointer;
 }
 .cmdline button:hover { color: var(--amber); border-color: var(--amber); }
@@ -286,4 +288,7 @@ dialog h2 { margin-top: 0; }
   .statusline .meta { display: none; }
   .banner { font-size: 8.5px; }
   .tabline .host { display: none; }
+  /* keep all four tabs on screen: drop the key hints and the .md extension on touch-sized widths */
+  .tabline a { padding: 0.25rem 1ch; }
+  .tabline a .n, .tabline a .ext, .keyhint { display: none; }
 }
