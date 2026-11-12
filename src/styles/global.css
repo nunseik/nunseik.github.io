@@ -169,8 +169,7 @@ img { max-width: 100%; height: auto; display: block; }
 @keyframes blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
 
-.banner { color: var(--amber); font-size: 12px; line-height: 1.05; margin: 0 0 1.5rem; overflow-x: auto; white-space: pre; background: none !important; border: 0; padding: 0; text-shadow: 0 0 8px rgba(229, 169, 74, 0.35); }
-.banner::before { line-height: 1.65; }
+.banner { display: block; max-width: 100%; height: auto; color: var(--amber); font-size: 12px; margin: 0 0 1.5rem; overflow: visible; filter: drop-shadow(0 0 8px rgba(229, 169, 74, 0.35)); }
 
 .badge { font-size: 13px; }
 .badge::before { content: '['; color: var(--faint); }

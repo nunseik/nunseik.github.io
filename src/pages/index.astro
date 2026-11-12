@@ -12,10 +12,18 @@ const banner = String.raw`
  █████   ███████ ██████  ██ ██    ██
  ██      ██   ██ ██   ██ ██ ██    ██
  ██      ██   ██ ██████  ██  ██████ `;
+
+// Drawn as SVG cells rather than text: web JetBrains Mono has no U+2588, and on Android the
+// fallback font's █ is a different width from the space, so the letters fall apart.
+const rows = banner.slice(1).split('\n');
+const cols = Math.max(...rows.map((r) => r.length));
+const cells = rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '█' ? [`M${x * 6} ${y * 10.5}h6.05v10.55h-6.05z`] : [])));
 ---
 <Base title="Fabio Fernandes" file="~/index.md" tab="home">
   <div class="buf">
-    <pre class="banner nonum" aria-label="Fabio" set:text={banner.slice(1)} />
+    <svg class="banner nonum" role="img" aria-label="Fabio" viewBox={`0 0 ${cols * 6} ${rows.length * 10.5}`} style={`width:${(cols * 0.6).toFixed(2)}em`}>
+      <path fill="currentColor" d={cells.join('')} />
+    </svg>
 
     <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> <span data-type>whoami</span></p>
     <p>
