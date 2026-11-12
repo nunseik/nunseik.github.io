@@ -4,9 +4,7 @@ import Tildes from '../components/Tildes.astro';
 
 // The only facts on this page that change. Keep them here.
 const terms = {
-  // R$1,000⁠–⁠2,000 per 8-hour day; USD at ~5.15 BRL (Nov 2026), rounded.
-  rate: 'R$ 125⁠–⁠250 / hour', rateUsd: 'about US$ 25⁠–⁠50',
-  dayRate: 'R$ 1,000⁠–⁠2,000 / day (8 h)', dayRateUsd: 'about US$ 200⁠–⁠400',
+  prototypeFrom: 'US$ 1,500',
   reply: '2 working days',
 };
 
@@ -74,7 +72,7 @@ const mail = `mailto:nunseik@gmail.com?subject=${encodeURIComponent('Project ide
       </li>
       <li>
         <strong>You get a written plan:</strong> what I'll build, how long it should take, and the
-        estimated cost. Nothing starts until you agree.
+        price. Nothing starts until you agree.
       </li>
       <li>
         <strong>I build it in small steps</strong> and show you progress as I go, so you can change
@@ -84,13 +82,20 @@ const mail = `mailto:nunseik@gmail.com?subject=${encodeURIComponent('Project ide
 
     <h2>price</h2>
     <dl class="kv">
-      <dt>hourly</dt><dd>{terms.rate} <span class="dim">· {terms.rateUsd}</span></dd>
-      <dt>daily</dt><dd>{terms.dayRate} <span class="dim">· {terms.dayRateUsd}</span></dd>
+      <dt>prototype</dt>
+      <dd>
+        <strong>from {terms.prototypeFrom}</strong>
+        <span class="dim eg">a working app with the core features of your idea, ready to show at
+        events, to first customers or to investors</span>
+      </dd>
+      <dt>anything else</dt>
+      <dd>a fixed quote in the written plan</dd>
     </dl>
     <p class="dim">
-      Where a project lands in the range depends on its size and urgency. You get an estimate
-      before any work starts, and you only pay for the time agreed in the plan. For scale: a
-      working prototype like <a href="/projects/voo-livro/">Voo Livro</a> was one day of work.
+      The prototype package covers logins, the main flows of your idea, a real database and a live
+      link you can share. <a href="/projects/voo-livro/">Voo Livro</a> is a good example of the
+      size. More features, more polish or an app in the stores costs more, and you see the price
+      before anything starts.
     </p>
 
     <h2>not sure if it's a fit?</h2>
