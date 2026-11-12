@@ -1,0 +1,108 @@
+---
+import Base from '../layouts/Base.astro';
+import Tildes from '../components/Tildes.astro';
+
+// The only facts on this page that change. Keep them here.
+const terms = {
+  // R$1,000⁠–⁠2,000 per 8-hour day; USD at ~5.15 BRL (Nov 2026), rounded.
+  rate: 'R$ 125⁠–⁠250 / hour', rateUsd: 'about US$ 25⁠–⁠50',
+  dayRate: 'R$ 1,000⁠–⁠2,000 / day (8 h)', dayRateUsd: 'about US$ 200⁠–⁠400',
+  reply: '2 working days',
+};
+
+const hello = encodeURIComponent("Hi Fabio, I saw your site. I'd like help with: ");
+const wa = `https://wa.me/5511971058388?text=${hello}`;
+const mail = `mailto:nunseik@gmail.com?subject=${encodeURIComponent('Project idea')}`;
+---
+<Base title="Work with me" file="~/work.md" description="Freelance work for small businesses and startups: automations, bots, websites, apps, AI setup and working prototypes.">
+  <div class="buf">
+    <h1>work with me</h1>
+    <p>
+      <strong>Yes, I take freelance work.</strong> I help small businesses and startups turn an
+      idea, or a tedious manual task, into software that works. I build it end to end on my own,
+      so you talk to the person who writes the code.
+    </p>
+    <p>
+      <a href={wa}>→ message me on WhatsApp</a> <span class="dim">or</span> <a href={mail}>email me</a>{' '}
+      <span class="dim">· I reply within {terms.reply} · Portuguese, English or Spanish · remote, anywhere</span>
+    </p>
+
+    <h2>what I can build for you</h2>
+    <dl class="kv">
+      <dt>automations</dt>
+      <dd>
+        Stop copying things by hand. Spreadsheets that fill themselves, daily reports, price and
+        availability trackers, a bot that answers on Telegram or WhatsApp.
+        <span class="dim eg">e.g. <a href="/projects/personal-finances/">a finance bot</a>, <a href="/projects/airbnb-tracker/">a booking tracker</a></span>
+      </dd>
+      <dt>websites</dt>
+      <dd>
+        A fast site for your business, or an internal tool your team uses every day: dashboards,
+        forms, admin pages.
+        <span class="dim eg">e.g. <a href="/projects/habla-mucho/">a platform for teachers</a></span>
+      </dd>
+      <dt>mobile apps</dt>
+      <dd>
+        iPhone and Android apps, from the first screen to the app stores.
+        <span class="dim eg">e.g. <a href="/projects/sentinel/">a crime-map app</a></span>
+      </dd>
+      <dt>AI setup</dt>
+      <dd>
+        Put AI to work on your real tasks: transcribing calls, drafting documents, searching your
+        own files, or setting up coding agents for your team, safely.
+        <span class="dim eg">e.g. <a href="/projects/audio-recorder/">a session recorder</a>, <a href="/tools/">my AI tooling</a></span>
+      </dd>
+      <dt>prototypes</dt>
+      <dd>
+        Got an idea and need to show it to customers or investors? I build a working prototype end
+        to end: real screens, real data, something people can actually use.
+        <span class="dim eg">e.g. <a href="/projects/voo-livro/">Voo Livro</a>, a book-sharing web app with logins, QR codes
+        and a real database, built in <strong>one day</strong></span>
+      </dd>
+    </dl>
+
+    <h2>how it works</h2>
+    <ol>
+      <li>
+        <strong>Send me a message</strong> on <a href={wa}>WhatsApp</a> or by
+        <a href={mail}>email</a>. A few lines is enough: what you do today, what you'd like to
+        change, and whether there's a deadline. Screenshots or a voice note help.
+      </li>
+      <li>
+        <strong>I reply within {terms.reply}</strong> with questions, or a short call if it's
+        easier to explain out loud.
+      </li>
+      <li>
+        <strong>You get a written plan:</strong> what I'll build, how long it should take, and the
+        estimated cost. Nothing starts until you agree.
+      </li>
+      <li>
+        <strong>I build it in small steps</strong> and show you progress as I go, so you can change
+        your mind early, not at the end.
+      </li>
+    </ol>
+
+    <h2>price</h2>
+    <dl class="kv">
+      <dt>hourly</dt><dd>{terms.rate} <span class="dim">· {terms.rateUsd}</span></dd>
+      <dt>daily</dt><dd>{terms.dayRate} <span class="dim">· {terms.dayRateUsd}</span></dd>
+    </dl>
+    <p class="dim">
+      Where a project lands in the range depends on its size and urgency. You get an estimate
+      before any work starts, and you only pay for the time agreed in the plan. For scale: a
+      working prototype like <a href="/projects/voo-livro/">Voo Livro</a> was one day of work.
+    </p>
+
+    <h2>not sure if it's a fit?</h2>
+    <p>
+      Ask anyway. If it's not something I do well, I'll tell you, and point you to what I'd use
+      instead.
+    </p>
+    <p><a href={wa}>→ WhatsApp +55 11 97105-8388</a> <span class="dim">·</span> <a href={mail}>nunseik@gmail.com</a></p>
+    <Tildes n={3} />
+  </div>
+</Base>
+
+<style>
+  .eg { display: block; margin-top: 0.15rem; }
+</style>

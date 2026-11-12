@@ -22,6 +22,7 @@ const isPublic = d.repo !== 'private';
     <p class="dim nonum">" {d.kind} · <a href="/projects/">../</a></p>
     <h1>{d.title}</h1>
     <p>{d.tagline}</p>
+    <p class="dim">Want something like this for your business? <a href="/work/">→ work with me</a></p>
 
     <dl class="kv">
       <dt>status</dt><dd><span class={`badge ${d.status}`}>{d.status}</span>{d.note && <span class="dim"> {d.note}</span>}</dd>
@@ -53,6 +54,7 @@ const isPublic = d.repo !== 'private';
       {prev && next && ' · '}
       {next && <a href={`/projects/${next.id}/`}>{next.id} →</a>}
     </p>
+    <p>Need something like this? <a href="/work/">→ work with me</a></p>
     <Tildes n={3} />
   </div>
 </Base>

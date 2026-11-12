@@ -22,4 +22,4 @@ A bit like Goodreads, but for physical copies that travel. Someone "sets a book 
 
 ## Status
 
-Very early. Built solo over a few days in November 2026. The core flows are live for testers and the next step is real-world testing with phones and cameras.
+Very early. Built solo in **one day** in November 2026, as a working prototype. The core flows are live for testers and the next step is real-world testing with phones and cameras.

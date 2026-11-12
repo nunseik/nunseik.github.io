@@ -170,6 +170,7 @@ const buffers: Record<string, string> = {
   tools: '/tools/', tooling: '/tools/', 'ai-tooling': '/tools/', ai: '/tools/',
   memoryctl: '/tools/memoryctl/', memory: '/tools/memoryctl/', 'ai-tooling/memoryctl': '/tools/memoryctl/',
   about: '/about/', contact: '/about/#contact',
+  work: '/work/', hire: '/work/', freelance: '/work/',
 };
 
 function findProject(q: string) {
@@ -223,6 +224,7 @@ function run(raw: string) {
     case 'projects': location.href = '/projects/'; return;
     case 'tools': location.href = '/tools/'; return;
     case 'about': location.href = '/about/'; return;
+    case 'work': case 'hire': location.href = '/work/'; return;
     case 'colo': case 'colorscheme':
       say('Only one colorscheme installed: dark. As it should be.', 'ok');
       return;
