@@ -30,7 +30,8 @@ updatePos();
 
 // ── link navigation (j/k), lynx-style ─────────────────
 // j/k move between the links in the buffer (list rows included); Enter follows.
-// If the next link is far below the fold, j scrolls instead, so long text is read, not skipped.
+// Reading stays smooth: j scrolls a small step (32 px, a bit over one line) until the next link is
+// on screen or one step away, then selects it. No move ever scrolls more than about one step.
 // collected on every move: the replay terminal adds its button after this script runs
 const collect = () => Array.from(document.querySelectorAll<HTMLElement>('#buf a[href], #buf button')).filter(
   (a) => a.getClientRects().length > 0,
@@ -84,12 +85,12 @@ function step(dir: 1 | -1) {
       ? items.findIndex((a) => a.getBoundingClientRect().top >= c.top)
       : items.findLastIndex((a) => a.getBoundingClientRect().bottom <= c.bottom);
   }
-  const c = chrome(), page = c.bottom - c.top;
+  const c = chrome(), STEP = 32;
   const target = items[next];
   const r = target?.getBoundingClientRect();
-  const near = r && (dir === 1 ? r.top < c.bottom + page / 2 : r.bottom > c.top - page / 2);
+  const near = r && (dir === 1 ? r.bottom <= c.bottom + STEP : r.top >= c.top - STEP);
   if (target && near) return select(next);
-  scrollBy({ top: dir * (target ? page / 2 : 64) });
+  scrollBy({ top: dir * STEP });
 }
 
 // ── jumplist (Ctrl-o / Ctrl-i) ───────────────────────────
