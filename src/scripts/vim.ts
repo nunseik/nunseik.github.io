@@ -28,17 +28,68 @@ addEventListener('scroll', updatePos, { passive: true });
 addEventListener('resize', updatePos);
 updatePos();
 
-// ── list selection (j/k over [data-nav] links) ───────────
-const items = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav]'));
+// ── link navigation (j/k), lynx-style ─────────────────
+// j/k move between the links in the buffer (list rows included); Enter follows.
+// If the next link is far below the fold, j scrolls instead, so long text is read, not skipped.
+// collected on every move: the replay terminal adds its button after this script runs
+const collect = () => Array.from(document.querySelectorAll<HTMLElement>('#buf a[href], #buf button')).filter(
+  (a) => a.getClientRects().length > 0,
+);
+let items = collect();
 let sel = -1;
+const chrome = () => ({
+  top: document.querySelector('.tabline')?.getBoundingClientRect().bottom ?? 0,
+  bottom: document.querySelector('.status')?.getBoundingClientRect().top ?? innerHeight,
+});
+// fully visible between the tab bar and the status line (a half-clipped link doesn't count)
+const onScreen = (el: Element) => {
+  const r = el.getBoundingClientRect(), c = chrome();
+  return r.top >= c.top && r.bottom <= c.bottom;
+};
+// like scrollIntoView({block:'nearest'}), but clear of the sticky tab bar and status line
+function reveal(el: Element) {
+  const r = el.getBoundingClientRect(), c = chrome(), m = 8;
+  if (r.bottom > c.bottom - m) scrollBy({ top: r.bottom - c.bottom + m });
+  else if (r.top < c.top + m) scrollBy({ top: r.top - c.top - m });
+}
 function select(i: number) {
-  if (!items.length) return false;
-  sel = Math.max(0, Math.min(items.length - 1, i));
-  items.forEach((el, n) => el.classList.toggle('sel', n === sel));
-  items[sel].scrollIntoView({ block: 'nearest' });
-  const d = items[sel].dataset.nav;
-  if (d) say(d);
+  if (i < 0 || i >= items.length) return false;
+  sel = i;
+  const el = items[sel];
+  items.forEach((a, n) => a.classList.toggle('sel', n === sel));
+  el.focus({ preventScroll: true });
+  reveal(el);
+  say(el.dataset.nav || (el.getAttribute('href') ? `→ ${el.getAttribute('href')}` : `[${el.textContent?.trim()}]`));
   return true;
+}
+function clearSel() {
+  items.forEach((a) => a.classList.remove('sel'));
+  if (sel >= 0) items[sel].blur();
+  sel = -1;
+}
+function step(dir: 1 | -1) {
+  const current = items[sel];
+  items = collect();
+  sel = current ? items.indexOf(current) : -1;
+  // resume from the focused link (Tab, click) or the selection if still visible, else from what is on screen
+  const active = items.indexOf(document.activeElement as HTMLElement);
+  if (active >= 0) sel = active;
+  // at the top of the buffer with nothing selected, k has nowhere to go (as in vim)
+  if (dir === -1 && sel < 0 && scrollY <= 4) return;
+  let next: number;
+  if (sel >= 0 && onScreen(items[sel])) next = sel + dir;
+  else {
+    const c = chrome();
+    next = dir === 1
+      ? items.findIndex((a) => a.getBoundingClientRect().top >= c.top)
+      : items.findLastIndex((a) => a.getBoundingClientRect().bottom <= c.bottom);
+  }
+  const c = chrome(), page = c.bottom - c.top;
+  const target = items[next];
+  const r = target?.getBoundingClientRect();
+  const near = r && (dir === 1 ? r.top < c.bottom + page / 2 : r.bottom > c.top - page / 2);
+  if (target && near) return select(next);
+  scrollBy({ top: dir * (target ? page / 2 : 64) });
 }
 
 // ── jumplist (Ctrl-o / Ctrl-i) ───────────────────────────
@@ -87,6 +138,7 @@ function search(q: string, step: 1 | -1 = 1) {
   hit = (hit + step + found.length) % found.length;
   const r = found[hit];
   markJump();
+  clearSel();
   const sel = getSelection();
   sel?.removeAllRanges();
   sel?.addRange(r);
@@ -225,7 +277,7 @@ addEventListener('keydown', (e) => {
   const k = e.key;
   if (pending === 'g') {
     pending = '';
-    if (k === 'g') { markJump(); scrollTo({ top: 0 }); if (items.length) select(0); return; }
+    if (k === 'g') { markJump(); scrollTo({ top: 0 }); clearSel(); return; }
   }
   switch (k) {
     case ':': e.preventDefault(); openCmd(); break;
@@ -233,17 +285,18 @@ addEventListener('keydown', (e) => {
     case 'n': if (lastSearch) search(lastSearch, 1); else say('E35: No previous regular expression', 'err'); break;
     case 'N': if (lastSearch) search(lastSearch, -1); else say('E35: No previous regular expression', 'err'); break;
     case '?': help.showModal(); break;
-    case 'j': if (!select(sel + 1)) scrollBy({ top: 64 }); break;
-    case 'k': if (!select(sel - 1)) scrollBy({ top: -64 }); break;
-    case 'G': markJump(); scrollTo({ top: document.documentElement.scrollHeight }); if (items.length) select(items.length - 1); break;
+    case 'j': e.preventDefault(); step(1); break;
+    case 'k': e.preventDefault(); step(-1); break;
+    case 'G': markJump(); clearSel(); scrollTo({ top: document.documentElement.scrollHeight }); break;
     case 'g': pending = 'g'; break;
-    case 'Enter': if (sel >= 0 && items[sel]) items[sel].click(); break;
+    // a focused link follows itself on Enter; only click when the selection lost focus
+    case 'Enter': if (sel >= 0 && items[sel] && document.activeElement !== items[sel]) items[sel].click(); break;
     case '-': {
       const up = location.pathname.replace(/[^/]+\/$/, '');
       if (up !== location.pathname) location.href = up || '/';
       break;
     }
-    case 'Escape': items.forEach((el) => el.classList.remove('sel')); sel = -1; say(''); break;
+    case 'Escape': clearSel(); say(''); break;
     default:
       if (/^[1-4]$/.test(k)) {
         const a = document.querySelector<HTMLAnchorElement>(`.tabline a[data-tab="${k}"]`);

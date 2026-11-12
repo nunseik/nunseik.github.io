@@ -19,7 +19,7 @@
 
 * { box-sizing: border-box; }
 
-html { background: var(--bg); scroll-padding-bottom: 4rem; }
+html { background: var(--bg); scroll-padding-top: 2.5rem; scroll-padding-bottom: 4rem; }
 
 body {
   margin: 0;

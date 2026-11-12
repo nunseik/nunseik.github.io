@@ -27,7 +27,7 @@ const isPublic = d.repo !== 'private';
       <dt>status</dt><dd><span class={`badge ${d.status}`}>{d.status}</span>{d.note && <span class="dim"> {d.note}</span>}</dd>
       <dt>started</dt><dd>{d.started}</dd>
       <dt>repo</dt>
-      <dd>{isPublic ? <a href={d.repo}>{d.repo.replace('https://', '')}</a> : <><span class="dim">private · </span><a href="/about/#contact">happy to walk through the code on a call</a></>}</dd>
+      <dd>{isPublic ? <a href={d.repo}>{d.repo.replace('https://', '')}</a> : <span class="dim">private</span>}</dd>
       {d.links.map((l) => (<><dt>link</dt><dd><a href={l.href}>{l.label}</a></dd></>))}
     </dl>
 

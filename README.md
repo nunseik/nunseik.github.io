@@ -22,4 +22,4 @@ The repo must be named `nunseik.github.io`, and Settings → Pages → Source mu
 
 ## Keys
 
-`j/k` move · `Enter` open · `gg/G` · `-` up · `1–4` tabs · `:e <project>` · `:ls` · `?` help
+`j/k` next/previous link · `Enter` open · `gg/G` · `-` up · `1–4` tabs · `:e <project>` · `:ls` · `?` help
