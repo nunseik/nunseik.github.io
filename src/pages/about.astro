@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import Tildes from '../components/Tildes.astro';
+---
+<Base title="About" file="~/about.md" tab="about">
+  <div class="buf">
+    <h1>about</h1>
+    <p>
+      I'm Fabio, a developer based in Brazil. I tend to build things I want to exist, and then keep
+      going: a crime map turned into a mobile app, a pronunciation experiment
+      turned into a platform for teachers, a spreadsheet I never opened turned into a Telegram bot.
+    </p>
+    <p>
+      Most of my work happens in a terminal, in vim, with AI agents alongside. I care about the
+      boring parts that make things last: tests, review gates, backups, cheap infrastructure, and
+      writing down why a decision was made.
+    </p>
+
+    <h2>things I like</h2>
+    <ul>
+      <li>small, DIY systems: SQLite, free-tier VMs, tunnels, one binary that serves everything</li>
+      <li>local-first AI: Whisper, embeddings and TTS running on my own laptop</li>
+      <li>hardware tinkering, like a passive-cooling mod measured with my own <a href="/projects/thermal-bench-macos/">benchmark</a></li>
+      <li>languages, both the spoken kind (Portuguese, English, Spanish) and the programming kind</li>
+      <li>physics, for fun (<a href="/projects/higgs-talk/">exhibit A</a>)</li>
+    </ul>
+
+    <h2>toolbox</h2>
+    <dl class="kv">
+      <dt>languages</dt><dd>Go, Python, TypeScript, Dart, Swift, SQL, shell</dd>
+      <dt>web</dt><dd>Next.js, React, Astro, FastAPI, plain HTML/CSS/JS</dd>
+      <dt>mobile</dt><dd>Flutter, native iOS bits (Live Activities, widgets), Android</dd>
+      <dt>data</dt><dd>PostgreSQL + PostGIS, SQLite, Supabase, ETL, geocoding</dd>
+      <dt>AI</dt><dd>Claude Code, Codex, MCP, Whisper, embeddings, TTS, Ollama, MLX</dd>
+      <dt>ops</dt><dd>Linux VMs, systemd, Caddy, GitHub Actions, Cloudflare Tunnel</dd>
+    </dl>
+
+    <h2>contact</h2>
+    <dl class="kv">
+      <dt>email</dt><dd><a href="mailto:nunseik@gmail.com">nunseik@gmail.com</a></dd>
+      <dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/dantasfabio/">in/dantasfabio</a></dd>
+      <dt>whatsapp</dt><dd><a href="https://wa.me/5511971058388">+55 11 97105-8388</a></dd>
+      <dt>github</dt><dd><a href="https://github.com/nunseik">nunseik</a></dd>
+    </dl>
+    <Tildes n={4} />
+  </div>
+</Base>

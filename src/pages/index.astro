@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Ls from '../components/Ls.astro';
+import Tildes from '../components/Tildes.astro';
+import { byKind } from '../lib';
+
+const { flagship, automation, experiment } = await byKind();
+
+const banner = String.raw`
+ ███████  █████  ██████  ██  ██████
+ ██      ██   ██ ██   ██ ██ ██    ██
+ █████   ███████ ██████  ██ ██    ██
+ ██      ██   ██ ██   ██ ██ ██    ██
+ ██      ██   ██ ██████  ██  ██████ `;
+---
+<Base title="Fabio Fernandes" file="~/index.md" tab="home">
+  <div class="buf">
+    <pre class="banner nonum" aria-label="Fabio" set:text={banner.slice(1)} />
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> whoami</p>
+    <p>
+      I'm <strong>Fabio</strong>. I build software end to end: data pipelines, Go and Python backends,
+      web and mobile apps. Lately I also build the tooling that lets AI agents work on those
+      projects safely: <em>MCP servers</em>, <em>skills</em>, review gates, project memory.
+    </p>
+    <p class="dim">
+      I like things small and DIY: one SQLite file instead of a cluster, a tunnel instead of a load
+      balancer, a free-tier VM instead of a bill, a cooling mod instead of a new laptop. I live in a
+      terminal, and you're in vim now. Press <code>?</code> for the keys.
+    </p>
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> ls -l projects/</p>
+    <Ls items={flagship} />
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> ls -l automation/</p>
+    <Ls items={automation} />
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> ls -l lab/</p>
+    <Ls items={experiment} />
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> tree -L 1 ~/.claude</p>
+    <pre class="nonum" style="margin-top:-0.5rem">{`~/.claude
+├── mcp/       4 custom MCP servers (production ops, teachers, finances, Habla Mucho ops)
+├── skills/    ux-review · code-review · logic-review · format-bcg · bcg-refresh
+├── agents/    logic-reviewer · security-auditor · red-team · commit-push
+└── commands/  /local-review · /local-security · /ask-local … (on-device, via Ollama)`}</pre>
+    <p><a href="/tools/">→ open ai-tooling.md</a> <span class="dim">(or press 3)</span></p>
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> cat contact.txt</p>
+    <dl class="kv">
+      <dt>email</dt><dd><a href="mailto:nunseik@gmail.com">nunseik@gmail.com</a></dd>
+      <dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/dantasfabio/">in/dantasfabio</a></dd>
+      <dt>whatsapp</dt><dd><a href="https://wa.me/5511971058388">+55 11 97105-8388</a></dd>
+      <dt>github</dt><dd><a href="https://github.com/nunseik">nunseik</a></dd>
+    </dl>
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> <span class="cursor" aria-hidden="true">&nbsp;</span></p>
+    <Tildes n={5} />
+  </div>
+</Base>

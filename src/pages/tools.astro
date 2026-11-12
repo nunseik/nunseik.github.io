@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+import Tildes from '../components/Tildes.astro';
+---
+<Base title="AI tooling" file="~/ai-tooling.md" tab="tools" description="MCP servers, skills, agents and workflows I built so AI agents can work on real projects safely.">
+  <div class="buf">
+    <h1>AI tooling</h1>
+    <p>
+      I write a lot of code with AI agents (Claude Code and Codex, mostly). The interesting part isn't
+      the prompting. It's the <strong>scaffolding</strong> that makes agents useful on a real,
+      long-running project without breaking production: typed tools, review gates, memory, and
+      humans in the loop where it matters.
+    </p>
+
+    <blockquote>
+      Rules I keep coming back to: agents get <em>typed tools, not raw SSH</em>. Reads are free,
+      writes ask first. Nothing an AI generates reaches a real user until a human has seen it.
+    </blockquote>
+
+    <h2>MCP servers I wrote</h2>
+    <table>
+      <thead><tr><th>server</th><th>for</th><th>what it does</th></tr></thead>
+      <tbody>
+        <tr><td><a href="/projects/sentinel/">mapa-ops</a></td><td class="dim">my agents</td><td>14 tools to run the crime-map production box: deploy, health, logs, ETL status, data refreshes, read-only SQL. Any write needs explicit confirmation and a verification step.</td></tr>
+        <tr><td><a href="/projects/habla-mucho/">habla-mucho teacher MCP</a></td><td class="dim">teachers' own AI</td><td>Stateless streamable HTTP with per-teacher tokens and rate limits. Their assistant validates and saves lesson drafts that the teacher reviews before anything reaches students.</td></tr>
+        <tr><td><a href="/projects/habla-mucho/">teachers-assistant-ops</a></td><td class="dim">my agents</td><td>A plugin (MCP server + skill) for deploys, health checks and rollbacks on the Habla Mucho server.</td></tr>
+        <tr><td><a href="/projects/personal-finances/">finances</a></td><td class="dim">me + Claude/Codex</td><td>11 tools over SSH into a live SQLite DB: balances, summaries, budgets, holdings. Used for monthly money check-ups.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Skills</h2>
+    <ul>
+      <li><code>ux-review</code>: drives the local app as a persona on iPhone/WebKit, Android and desktop, then reports friction ranked by severity. Has a <em>focused</em> mode (review this change) and an <em>open</em> mode (try to accomplish a goal).</li>
+      <li><code>logic-review</code>: a defect-first review of uncommitted work. It prefers a second model (Codex CLI) and falls back to a Claude reviewer agent, so code is never reviewed only by the model that wrote it.</li>
+      <li><code>code-review</code>: correctness review with severity filters and an optional fix pass.</li>
+      <li><code>format-bcg</code> / <code>bcg-refresh</code>: turned a slow editorial job into a pipeline (<a href="/projects/class-central-formatter/">Class Central toolkit</a>).</li>
+      <li><code>server-operations</code>: operational runbook packaged as a skill for the Habla Mucho ops plugin.</li>
+    </ul>
+
+    <h2>Agents</h2>
+    <ul>
+      <li><code>logic-reviewer</code>: read-only, returns prioritised P0–P3 findings with a concrete failure scenario for each.</li>
+      <li><code>security-auditor</code>: adversarial static review covering OWASP Top 10, CWE, dependency CVEs, secrets and injection.</li>
+      <li><code>red-team</code>: boots the project locally and <strong>attacks the running app</strong> with real requests. A finding only counts if it was actually triggered. Loopback-only and non-destructive by design.</li>
+      <li><code>commit-push</code>: stages and writes Conventional Commits, so the main session stays focused.</li>
+    </ul>
+
+    <h2>On-device models</h2>
+    <p>
+      Not everything needs a frontier model. A set of slash commands sends quick jobs to local models
+      through <strong>Ollama</strong> (Qwen 3, Gemma, Llama): <code>/local-review</code>, <code>/local-security</code>,
+      <code>/local-explain</code>, <code>/local-generate</code>, <code>/ask-local</code>, <code>/commit-msg</code>. They're free and private, and
+      the code never leaves the machine.
+    </p>
+
+    <h2>Workflow patterns</h2>
+    <ul>
+      <li><strong>Project memory with semantic search:</strong> decisions, blockers and findings live in a small store, embedded locally with multilingual-e5. Each session pulls only what its task needs instead of reading every note.</li>
+      <li><strong>Opt-in context:</strong> short <code>AGENTS.md</code> / <code>CLAUDE.md</code> files that point to topic notes, loaded only when relevant.</li>
+      <li><strong>Lab CLIs as regression tests</strong> for fuzzy behaviour: replay a saved corpus through the classifier or the NLU before and after a change, and diff the results.</li>
+      <li><strong>Cross-model review gate</strong> before risky commits (ETL, SQL, migrations, assistant routing).</li>
+      <li><strong>Local-first AI</strong> where privacy matters: Whisper, e5 embeddings, Qwen TTS and Ollama all run on my own hardware.</li>
+    </ul>
+    <Tildes n={3} />
+  </div>
+</Base>

@@ -1,0 +1,58 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Tildes from '../../components/Tildes.astro';
+import { byKind } from '../../lib';
+
+export async function getStaticPaths() {
+  const { all } = await byKind();
+  return all.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, prev: all[i - 1] ?? null, next: all[i + 1] ?? null },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const isPublic = d.repo !== 'private';
+---
+<Base title={d.title} file={`~/projects/${entry.id}.md`} tab="projects" description={d.tagline}>
+  <div class="buf">
+    <p class="dim nonum">" {d.kind} · <a href="/projects/">../</a></p>
+    <h1>{d.title}</h1>
+    <p>{d.tagline}</p>
+
+    <dl class="kv">
+      <dt>status</dt><dd><span class={`badge ${d.status}`}>{d.status}</span>{d.note && <span class="dim"> {d.note}</span>}</dd>
+      <dt>started</dt><dd>{d.started}</dd>
+      <dt>repo</dt>
+      <dd>{isPublic ? <a href={d.repo}>{d.repo.replace('https://', '')}</a> : <span class="dim">private</span>}</dd>
+      {d.links.map((l) => (<><dt>link</dt><dd><a href={l.href}>{l.label}</a></dd></>))}
+    </dl>
+
+    <div class="chips" aria-label="Stack">{d.stack.map((s) => <span>{s}</span>)}</div>
+
+    {d.stats.length > 0 && (
+      <div class="stats">{d.stats.map((s) => <div><b>{s.value}</b><span>{s.label}</span></div>)}</div>
+    )}
+
+    {d.shots.length > 0 && (
+      <div class="shots" tabindex="0" aria-label="Screenshots">
+        {d.shots.map((s) => (
+          <figure><img src={s.src} alt={s.alt} loading="lazy" width="540" height="1170" /><figcaption>{s.alt}</figcaption></figure>
+        ))}
+      </div>
+    )}
+
+    <Content />
+
+    <hr />
+    <p class="dim">
+      {prev && <a href={`/projects/${prev.id}/`}>← {prev.id}</a>}
+      {prev && next && ' · '}
+      {next && <a href={`/projects/${next.id}/`}>{next.id} →</a>}
+    </p>
+    <Tildes n={3} />
+  </div>
+</Base>

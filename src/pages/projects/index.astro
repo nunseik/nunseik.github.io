@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import Ls from '../../components/Ls.astro';
+import Tildes from '../../components/Tildes.astro';
+import { byKind } from '../../lib';
+
+const { flagship, automation, experiment } = await byKind();
+---
+<Base title="Projects" file="~/projects/" tab="projects" filetype="netrw">
+  <div class="buf">
+    <p class="dim hdr">" ====================================</p>
+    <p class="dim hdr">" Netrw Directory Listing — ~/projects/</p>
+    <p class="dim hdr">"   j/k to move · Enter to open · - to go up</p>
+    <p class="dim hdr">" ====================================</p>
+
+    <h2>flagship</h2>
+    <Ls items={flagship} />
+
+    <h2>automation</h2>
+    <Ls items={automation} />
+
+    <h2>lab</h2>
+    <Ls items={experiment} />
+
+    <p class="dim">
+      Most repositories here are private. Each page explains the problem, the architecture and the
+      interesting parts. I'm happy to walk through the code itself on a call: <a href="/about/">get in touch</a>.
+    </p>
+    <Tildes n={3} />
+  </div>
+</Base>

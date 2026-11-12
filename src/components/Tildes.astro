@@ -1,0 +1,4 @@
+---
+const { n = 4 } = Astro.props;
+---
+{Array.from({ length: n }).map(() => <p class="tilde" aria-hidden="true">~</p>)}

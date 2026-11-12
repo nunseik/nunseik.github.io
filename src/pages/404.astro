@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import Tildes from '../components/Tildes.astro';
+---
+<Base title="Not found" file="[No Name]" filetype="">
+  <div class="buf">
+    <p class="red">E484: Can't open file {'<this page>'}</p>
+    <p class="dim">Nothing lives at this path. Try <code>:e sentinel</code>, <code>:ls</code>, or go <a href="/">home</a>.</p>
+    <Tildes n={12} />
+  </div>
+</Base>

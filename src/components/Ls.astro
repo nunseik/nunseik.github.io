@@ -1,0 +1,16 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { items: CollectionEntry<'projects'>[] }
+const { items } = Astro.props;
+const perm = (s: string) => (s === 'local' ? 'drwx---' : s === 'done' ? 'dr-xr-x' : 'drwxr-x');
+---
+<div class="ls">
+  {items.map((p) => (
+    <a href={`/projects/${p.id}/`} data-nav={`${p.id}/ — ${p.data.tagline}`}>
+      <span class="perm faint">{perm(p.data.status)}</span>
+      <span class="when">{p.data.started}</span>
+      <span class="name">{p.id}/</span>
+      <span class="desc"><span class={`badge ${p.data.status}`}>{p.data.status}</span> {p.data.tagline}</span>
+    </a>
+  ))}
+</div>
