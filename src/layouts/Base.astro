@@ -39,6 +39,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    {tab === 'home' && (
+      <script is:inline>
+        // First home visit of the session: hide lines before first paint so the intro can print them.
+        try {
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('intro')) {
+            sessionStorage.setItem('intro', '1');
+            document.documentElement.classList.add('intro');
+          }
+        } catch (e) {}
+      </script>
+    )}
   </head>
   <body>
     <a href="#buf" class="sr-skip" style="position:absolute;left:-999px">Skip to content</a>
@@ -85,7 +96,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         <dt>Ctrl-o / Ctrl-i</dt><dd>jump back / forward</dd>
         <dt>1–4</dt><dd>switch buffer (tabs)</dd>
         <dt>-</dt><dd>go up a directory</dd>
-        <dt>:e &lt;name&gt;</dt><dd>open a project, e.g. <code>:e sentinel</code></dd>
+        <dt>:e &lt;name&gt;</dt><dd>open a project, e.g. <code>:e sentinel</code> or <code>:e memoryctl</code></dd>
         <dt>:ls</dt><dd>list projects</dd>
         <dt>:q</dt><dd>close the buffer (back to index.md), then try it again</dd>
       </dl>
@@ -94,5 +105,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
     <script type="application/json" id="projects-data" set:html={JSON.stringify(projects)} />
     <script src="../scripts/vim.ts"></script>
+    <script src="../scripts/anim.ts"></script>
   </body>
 </html>

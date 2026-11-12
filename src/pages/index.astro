@@ -17,11 +17,11 @@ const banner = String.raw`
   <div class="buf">
     <pre class="banner nonum" aria-label="Fabio" set:text={banner.slice(1)} />
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> whoami</p>
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> <span data-type>whoami</span></p>
     <p>
       I'm <strong>Fabio</strong>. I build software end to end: data pipelines, Go and Python backends,
       web and mobile apps. Lately I also build the tooling that lets AI agents work on those
-      projects safely: <em>MCP servers</em>, <em>skills</em>, review gates, project memory.
+      projects safely: <em>MCP servers</em>, <em>skills</em>, review gates, <a href="/tools/memoryctl/">project memory</a>.
     </p>
     <p><a href="/about/#contact">→ contact me</a> <span class="dim">(email, LinkedIn, WhatsApp<span class="keyhint"> · or press 4</span>)</span></p>
     <p class="dim">
@@ -46,6 +46,13 @@ const banner = String.raw`
 ├── agents/    logic-reviewer · security-auditor · red-team · commit-push
 └── commands/  /local-review · /local-security · /ask-local … (on-device, via Ollama)`}</pre>
     <p><a href="/tools/">→ open ai-tooling.md</a> <span class="dim">(or press 3)</span></p>
+
+    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> memoryctl --help</p>
+    <p>
+      <strong>memoryctl</strong> is the project memory I built so one person and several AI agents
+      could build a seven-part app together: 799 decisions, blockers and checkpoints shared by
+      Codex, Claude and me. <a href="/tools/memoryctl/">→ how it works</a>
+    </p>
 
     <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> cat contact.txt</p>
     <dl class="kv">

@@ -1,0 +1,106 @@
+---
+import Base from '../../layouts/Base.astro';
+import Tildes from '../../components/Tildes.astro';
+
+// The session replay. Lines starting with "$ " are typed; the rest print as output.
+// Titles below are illustrative (built from facts already on this site); real memory contents stay private.
+const replay = [
+  '$ memoryctl context --project mapa-crimes --query "android battery"',
+  '{',
+  '  "mode": "compact",',
+  '  "latest_checkpoint": {',
+  '    "item_type": "checkpoint", "area": "mobile",',
+  '    "title": "Motion-aware GPS shipped; overnight drain still unmeasured"',
+  '  },',
+  '  "open_blockers": [',
+  '    { "title": "Background wake on iOS is best-effort, not guaranteed" }',
+  '  ],',
+  '  "recent_decisions": [',
+  '    { "title": "Adapt GPS frequency to still / walking / driving" },',
+  '    { "title": "Location never leaves the device" }',
+  '  ],',
+  '  "active_tasks": [',
+  '    { "title": "Overnight Android battery verification" }',
+  '  ],',
+  '  "relevant_hits": [ "…3 semantic matches (e5, local)" ]',
+  '}',
+  '',
+  '$ # …the agent works…',
+  '$ memoryctl checkpoint --project mapa-crimes --title "Battery check done" --created-by claude',
+  '{ "id": 800, "item_type": "checkpoint", "status": "active" }',
+];
+---
+<Base title="memoryctl" file="~/ai-tooling/memoryctl.md" tab="tools" description="memoryctl: the project memory that let me build a many-part app solo, with AI agents that resume each part with the right context.">
+  <div class="buf">
+    <p class="dim nonum">" ai tooling · <a href="/tools/">../</a></p>
+    <h1>memoryctl: project memory for one human and many agents</h1>
+    <p>
+      The tool I'm proudest of isn't user-facing. It's the reason I could build <a href="/projects/sentinel/">Sentinel</a> alone: backend, ETL, NLU, iOS, Android, web and infrastructure, with AI agents resuming each part with the right context instead of starting cold every session.
+    </p>
+
+    <div class="stats">
+      <div><b>799</b><span>memory items in 7 months</span></div>
+      <div><b>121</b><span>recorded decisions</span></div>
+      <div><b>3</b><span>authors: Codex, Claude, me</span></div>
+      <div><b>0</b><span>external APIs (embeddings run locally)</span></div>
+    </div>
+
+    <h2>how a session starts</h2>
+    <p class="dim">An example session. Commands and output shape are real; the titles are illustrative, and the real memory stays private.</p>
+    <pre class="term nonum" data-replay aria-label="Terminal: an agent loads memory context, works, then writes a checkpoint">{replay.map((l) =>
+      l.startsWith('$ ')
+        ? <span class="ln in"><span class="prompt">$ </span><span class="typed">{l.slice(2)}</span>{'\n'}</span>
+        : <span class="ln out">{l}{'\n'}</span>
+    )}</pre>
+    <p class="dim">
+      One command gives the agent the latest checkpoint, open blockers, recent decisions, active tasks and semantic matches for its topic. It's compact by default to keep tokens low, with <code>--full</code> when needed.
+    </p>
+
+    <h2>the problem</h2>
+    <p>
+      Every agent session starts with no memory. On a small project, the code and <code>git log</code> are enough. On one with seven moving parts, the important things live nowhere in the code: <em>why</em> GPS polling works the way it does, which approach was tried and dropped, what is blocked on what. I kept re-explaining them, and agents kept re-deciding them.
+    </p>
+
+    <h2>the design</h2>
+    <ul>
+      <li><strong>Typed items:</strong> <code>decision</code>, <code>blocker</code>, <code>task</code>, <code>note</code>, <code>checkpoint</code>, <code>verification</code>, <code>feature</code> and a few more. Each has a status, area, platform, priority, confidence, tags and the branch/commit it was written on.</li>
+      <li><strong>Links and refs:</strong> items link to each other (<code>blocks</code>, <code>caused_by</code>, <code>fixes</code>, <code>validates</code>, <code>implements</code>…) and point at files, symbols, commits, tests, logs or URLs.</li>
+      <li><strong>Supersedes, not edits:</strong> a new decision can replace an old one with <code>supersedes</code>, so the history of a change of mind is kept.</li>
+      <li><strong>Handoff import:</strong> <code>import-handoff</code> turns a Markdown handoff into a checkpoint with one linked item per section, with a <code>--dry-run</code>.</li>
+      <li><strong>Local-first:</strong> a Go CLI over a PostgreSQL schema on my machine. There is no HTTP endpoint, and it never touches the production server.</li>
+    </ul>
+
+    <h2>the rules</h2>
+    <p>The tool is small. The rules that agents follow (from <code>AGENTS.md</code>) are what make it work:</p>
+    <ol>
+      <li>Load <code>memoryctl context --query "&lt;topic&gt;"</code> before meaningful work.</li>
+      <li>Record only what code, <code>git log</code> and the handoff can't tell you: durable decisions, non-obvious root causes, blockers with a next action, real follow-ups.</li>
+      <li>Search before writing. Supersede instead of duplicating. Memory is not a progress log.</li>
+      <li>End each meaningful session with one concise checkpoint.</li>
+      <li>Sign every record with <code>--created-by</code>, so Codex, Claude and I share one memory and I can tell who wrote what.</li>
+    </ol>
+
+    <h2>semantic search, offline</h2>
+    <pre class="nonum">{`items ──► chunk-items ──► embed-sync ──► semantic-search
+                              │              (cosine, in Postgres)
+                              ▼
+                 multilingual-e5 sidecar (CPU, local)`}</pre>
+    <p>
+      Notes mix Portuguese, English and code, so a multilingual model matters. The embedder is the same <strong>e5</strong> family that powers Sentinel's assistant, running on CPU with no external API. Vectors live in plain Postgres, and pgvector is an optional speed-up. A deterministic <code>hash</code> provider lets the pipeline be tested without the model.
+    </p>
+
+    <h2>in numbers</h2>
+    <dl class="kv">
+      <dt>since</dt><dd>2026-04 (first 3 commits on the same day), in daily use</dd>
+      <dt>items</dt><dd>799: 332 checkpoints, 169 tasks, 167 notes, 121 decisions, plus blockers and verifications</dd>
+      <dt>authors</dt><dd>Codex 360 · Claude 305 · me, directly, 131</dd>
+      <dt>graph</dt><dd>113 links · 198 refs</dd>
+      <dt>size</dt><dd>~1.9k lines of Go for the CLI, ~2.7k with the store and schema</dd>
+    </dl>
+
+    <p>
+      <a href="/projects/sentinel/">→ the project it was built for</a> · <a href="/tools/">the rest of my AI tooling</a> · <span class="dim">the repo is private, but I'm </span><a href="/about/#contact">happy to walk through it on a call</a>
+    </p>
+    <Tildes n={3} />
+  </div>
+</Base>

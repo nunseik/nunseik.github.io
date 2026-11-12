@@ -17,6 +17,15 @@ import Tildes from '../components/Tildes.astro';
       writes ask first. Nothing an AI generates reaches a real user until a human has seen it.
     </blockquote>
 
+    <h2>Project memory: memoryctl</h2>
+    <p>
+      The piece that made the rest possible. A local CLI where agents and I record decisions,
+      blockers and checkpoints, and every session starts by loading only the context for its task,
+      with offline semantic search. It's how I built <a href="/projects/sentinel/">Sentinel</a> alone
+      across backend, ETL, NLU, mobile, web and infra: 799 items in 7 months, written by Codex,
+      Claude and me. <a href="/tools/memoryctl/">→ read memoryctl.md</a>
+    </p>
+
     <h2>MCP servers I wrote</h2>
     <table>
       <thead><tr><th>server</th><th>for</th><th>what it does</th></tr></thead>
@@ -48,14 +57,13 @@ import Tildes from '../components/Tildes.astro';
     <h2>On-device models</h2>
     <p>
       Not everything needs a frontier model. A set of slash commands sends quick jobs to local models
-      through <strong>Ollama</strong> (Qwen 3, Gemma, Llama): <code>/local-review</code>, <code>/local-security</code>,
-      <code>/local-explain</code>, <code>/local-generate</code>, <code>/ask-local</code>, <code>/commit-msg</code>. They're free and private, and
+      through <strong>Ollama</strong> (Qwen 3, Gemma, Llama): <code>/local-review</code>, <code>/local-security</code>, <code>/local-explain</code>, <code>/local-generate</code>, <code>/ask-local</code>, <code>/commit-msg</code>. They're free and private, and
       the code never leaves the machine.
     </p>
 
     <h2>Workflow patterns</h2>
     <ul>
-      <li><strong>Project memory with semantic search:</strong> decisions, blockers and findings live in a small store, embedded locally with multilingual-e5. Each session pulls only what its task needs instead of reading every note.</li>
+      <li><strong>Project memory with semantic search</strong> (<a href="/tools/memoryctl/">memoryctl</a>): decisions, blockers and findings live in a small store, embedded locally with multilingual-e5. Each session pulls only what its task needs instead of reading every note.</li>
       <li><strong>Opt-in context:</strong> short <code>AGENTS.md</code> / <code>CLAUDE.md</code> files that point to topic notes, loaded only when relevant.</li>
       <li><strong>Lab CLIs as regression tests</strong> for fuzzy behaviour: replay a saved corpus through the classifier or the NLU before and after a change, and diff the results.</li>
       <li><strong>Cross-model review gate</strong> before risky commits (ETL, SQL, migrations, assistant routing).</li>

@@ -53,6 +53,6 @@ Under the hood it is a custom NLU pipeline rather than a chatbot wrapper. Questi
 This project is also where I learned to treat AI agents as a team that needs process:
 
 - **`mapa-ops` MCP server** (Go, 14 tools): deploy, health checks, logs, ETL status, grid refreshes, read-only SQL. Agents operate production through typed tools instead of improvised SSH, and anything that writes asks for confirmation first.
-- **Project memory** (`memoryctl`): a CLI that stores decisions, blockers and findings, with semantic search over them using the same e5 embeddings, so each agent session loads only the context relevant to its task.
+- **Project memory** ([`memoryctl`](/tools/memoryctl/)): the tool that made building this solo possible. A CLI that stores decisions, blockers and findings, with semantic search over them using the same e5 embeddings, so each agent session loads only the context relevant to its task. 799 items in 7 months, shared by Codex, Claude and me.
 - **Review gate:** risky changes (ETL, SQL, migrations, assistant routing) must pass a logic review by Codex, falling back to a Claude reviewer agent, before they can be committed.
 - **`/ux-review` skill:** drives the local app as a real person on iPhone/WebKit, Android and desktop, and reports friction by severity.

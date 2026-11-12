@@ -115,6 +115,7 @@ const buffers: Record<string, string> = {
   index: '/', home: '/', '~': '/',
   projects: '/projects/',
   tools: '/tools/', tooling: '/tools/', 'ai-tooling': '/tools/', ai: '/tools/',
+  memoryctl: '/tools/memoryctl/', memory: '/tools/memoryctl/', 'ai-tooling/memoryctl': '/tools/memoryctl/',
   about: '/about/', contact: '/about/#contact',
 };
 
@@ -156,6 +157,7 @@ function run(raw: string) {
       if (buffer) location.href = buffer;
       else if (p) location.href = `/projects/${p.id}/`;
       else if (/^(index|home|~)/.test(arg)) location.href = '/';
+      else if (/^mem/.test(arg)) location.href = '/tools/memoryctl/';
       else if (/^(tool|ai)/.test(arg)) location.href = '/tools/';
       else if (/^about/.test(arg)) location.href = '/about/';
       else say(`E484: Can't open file ${arg}`, 'err');
