@@ -313,4 +313,14 @@ dialog h2 { margin-top: 0; }
   .tabline a { padding: 0.25rem 1ch; }
   .tabline a .n, .tabline a .ext, .keyhint { display: none; }
   .term { font-size: 11.5px; }
+  /* .stack: tables and key/value lists with long text collapse to one column on phones */
+  table.stack thead { display: none; }
+  table.stack, table.stack tbody, table.stack tr { display: block; }
+  table.stack tr { padding: 0.6rem 0; border-bottom: 1px dashed var(--faint); }
+  table.stack td { border: 0; padding: 0; }
+  table.stack td:nth-child(-n+2) { display: inline; }
+  table.stack td:nth-child(2)::before { content: ' · '; color: var(--faint); }
+  table.stack td:nth-child(3) { display: block; margin-top: 0.2rem; }
+  .kv.stack { grid-template-columns: 1fr; gap: 0; }
+  .kv.stack dd { padding-left: 2ch; margin-bottom: 0.9rem; }
 }
