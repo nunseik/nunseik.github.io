@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Tildes from '../components/Tildes.astro';
+import Activity from '../components/Activity.astro';
 ---
 <Base title="About" file="~/about.md" tab="about">
   <div class="buf">
@@ -15,6 +16,9 @@ import Tildes from '../components/Tildes.astro';
       boring parts that make things last: tests, review gates, backups, cheap infrastructure, and
       writing down why a decision was made.
     </p>
+
+    <h2>last 12 months</h2>
+    <Activity />
 
     <h2>things I like</h2>
     <ul>

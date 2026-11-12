@@ -1,0 +1,111 @@
+---
+// GitHub contribution calendar for the last year, drawn in text. Data comes from
+// scripts/activity.mjs (run `npm run activity` before deploying to refresh it).
+import data from '../data/activity.json';
+
+const { login, generated, start, counts } = data as { login: string; generated: string; start: string; counts: number[] };
+
+const DAY = 86_400_000;
+const t0 = Date.parse(`${start}T00:00:00Z`);
+const dateOf = (i: number) => new Date(t0 + i * DAY);
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+// intensity levels from the quartiles of active days, like GitHub's calendar
+const active = counts.filter(Boolean).sort((a, b) => a - b);
+const q = (p: number) => active[Math.min(active.length - 1, Math.floor(p * active.length))] ?? 1;
+const cuts = [q(0.25), q(0.5), q(0.75)];
+const level = (n: number) => (n === 0 ? 0 : 1 + cuts.filter((c) => n > c).length);
+
+// columns are weeks starting on Sunday; pad the first week so rows line up with weekdays
+const lead = dateOf(0).getUTCDay();
+const cells: ({ date: string; n: number } | null)[] = [
+  ...Array(lead).fill(null),
+  ...counts.map((n, i) => ({ date: iso(dateOf(i)), n })),
+];
+const weeks = Array.from({ length: Math.ceil(cells.length / 7) }, (_, w) => cells.slice(w * 7, w * 7 + 7));
+
+// month label above the first week that contains the 1st (3 chars, skipped if it would collide)
+const monthRow: string[] = Array(weeks.length).fill('');
+let free = 0;
+weeks.forEach((wk, w) => {
+  const first = wk.find((c) => c && c.date.endsWith('-01'));
+  if (first && w >= free && w + 3 <= weeks.length) {
+    monthRow[w] = MONTHS[Number(first.date.slice(5, 7)) - 1];
+    free = w + 3;
+  }
+});
+
+const total = counts.reduce((a, b) => a + b, 0);
+let longest = 0, run = 0;
+for (const n of counts) { run = n ? run + 1 : 0; longest = Math.max(longest, run); }
+const fmt = (n: number) => n.toLocaleString('en-US');
+const summary = `${fmt(total)} GitHub contributions on ${active.length} days in the last year, longest streak ${longest} days`;
+const ROWS = ['', 'mon', '', 'wed', '', 'fri', ''];
+---
+<div class="activity">
+  <div class="act-scroll" tabindex="0" role="region" aria-label="contribution calendar, scrolls sideways">
+    <div class="act-grid" role="img" aria-label={summary} style={`--weeks:${weeks.length}`}>
+      <span></span>
+      {monthRow.map((m) => <span class="act-month" aria-hidden="true">{m}</span>)}
+      {ROWS.map((label, d) => (
+        <>
+          <span class="act-dow" aria-hidden="true">{label}</span>
+          {weeks.map((wk) => {
+            const c = wk[d];
+            if (!c) return <span aria-hidden="true"></span>;
+            const l = level(c.n);
+            return (
+              <span class={`sq act-l${l}`} title={`${c.date}: ${c.n} contribution${c.n === 1 ? '' : 's'}`} aria-hidden="true"></span>
+            );
+          })}
+        </>
+      ))}
+    </div>
+  </div>
+  <p class="act-sum">
+    <strong>{fmt(total)}</strong> contributions · <strong>{active.length}</strong> active days ·
+    longest streak <strong>{longest}</strong> days
+    <span class="act-legend" aria-hidden="true">less {[0, 1, 2, 3, 4].map((l) => <span class={`sq act-l${l}`}></span>)} more</span>
+  </p>
+  <p class="act-note">
+    from my <a href={`https://github.com/${login}`}>GitHub profile</a>, mostly in private repos · <span class="nowrap">updated {generated}</span>
+  </p>
+</div>
+
+<script>
+  // on narrow screens the calendar scrolls sideways: start at the most recent weeks
+  const toEnd = () => { for (const el of document.querySelectorAll<HTMLElement>('.act-scroll')) el.scrollLeft = el.scrollWidth; };
+  toEnd();
+  document.fonts?.ready.then(toEnd); // the web font changes the grid width once it loads
+</script>
+
+<style>
+  .activity { min-width: 0; --c: 11px; /* cell side */ }
+  .act-scroll { overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--faint) transparent; }
+  .act-scroll:focus-visible { outline: 1px dashed var(--amber); outline-offset: 2px; }
+  .act-grid {
+    display: grid;
+    grid-template-columns: 4ch repeat(var(--weeks), var(--c));
+    grid-template-rows: auto repeat(7, var(--c));
+    gap: 3px;
+    width: max-content;
+    padding-bottom: 0.25rem;
+  }
+  .act-month { color: var(--dim); white-space: nowrap; width: var(--c); font-size: 12px; line-height: 1.6; }
+  .act-dow { color: var(--dim); font-size: 11px; line-height: var(--c); }
+  .sq { display: inline-block; width: var(--c); height: var(--c); cursor: default; }
+  .act-l0 { background: var(--bg-hi); outline: 1px solid var(--faint); outline-offset: -1px; }
+  .act-l1 { background: color-mix(in srgb, var(--green) 30%, var(--bg)); }
+  .act-l2 { background: color-mix(in srgb, var(--green) 52%, var(--bg)); }
+  .act-l3 { background: color-mix(in srgb, var(--green) 76%, var(--bg)); }
+  .act-l4 { background: var(--green); }
+  .act-grid > .sq:hover { background: var(--amber); outline: none; }
+  .act-sum { margin: 0.5rem 0 0; }
+  .act-legend { margin-left: 2ch; color: var(--dim); white-space: nowrap; }
+  .act-legend .sq { margin: 0 1px; vertical-align: -1px; }
+  .act-note { margin: 0; color: var(--dim); }
+  .act-note code { color: var(--fg); }
+  .nowrap { white-space: nowrap; }
+  @media (max-width: 640px) { .act-legend { display: block; margin-left: 0; } }
+</style>
