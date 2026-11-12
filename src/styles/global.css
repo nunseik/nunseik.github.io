@@ -195,7 +195,8 @@ img { max-width: 100%; height: auto; display: block; }
 .ls a .desc { color: var(--dim); }
 .ls a:hover, .ls a:focus-visible, .ls a.sel { background: var(--sel); color: var(--fg); }
 .ls a.sel { box-shadow: inset 2px 0 0 var(--amber); }
-.ls a:hover .desc, .ls a.sel .desc { color: var(--fg); }
+/* --dim drops to 3.5:1 on --sel, so muted parts brighten with the row */
+.ls a:hover :is(.desc, .when), .ls a:focus-visible :is(.desc, .when), .ls a.sel :is(.desc, .when) { color: var(--fg); }
 
 /* key/value block, e.g. neofetch / file header */
 .kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.1rem 2ch; }

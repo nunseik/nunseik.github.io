@@ -111,6 +111,13 @@ function closeCmd() {
   input.blur();
 }
 
+const buffers: Record<string, string> = {
+  index: '/', home: '/', '~': '/',
+  projects: '/projects/',
+  tools: '/tools/', tooling: '/tools/', 'ai-tooling': '/tools/', ai: '/tools/',
+  about: '/about/', contact: '/about/#contact',
+};
+
 function findProject(q: string) {
   q = q.toLowerCase().replace(/\.md$/, '').replace(/^.*\//, '');
   return (
@@ -143,8 +150,11 @@ function run(raw: string) {
       return;
     case 'e': case 'edit': case 'o': case 'open': case 'b': case 'buffer': {
       if (!arg) return say('E32: No file name. Try :ls', 'err');
-      const p = findProject(arg);
-      if (p) location.href = `/projects/${p.id}/`;
+      // Exact buffer names win over fuzzy project matches (":e tools" must not open accessible-tools).
+      const buffer = buffers[arg.toLowerCase().replace(/\.md$/, '').replace(/\/$/, '')];
+      const p = buffer ? undefined : findProject(arg);
+      if (buffer) location.href = buffer;
+      else if (p) location.href = `/projects/${p.id}/`;
       else if (/^(index|home|~)/.test(arg)) location.href = '/';
       else if (/^(tool|ai)/.test(arg)) location.href = '/tools/';
       else if (/^about/.test(arg)) location.href = '/about/';
