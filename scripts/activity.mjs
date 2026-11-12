@@ -5,7 +5,8 @@
 // Only dates and counts are written: no repo names or messages, so private
 // repos stay private.
 //
-// usage: npm run activity            (needs the GitHub CLI, logged in as me)
+// Runs on every deploy (see .github/workflows/deploy.yml, which also rebuilds daily).
+// Locally: npm run activity   (needs the GitHub CLI; any token can read a public calendar)
 
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -13,10 +14,13 @@ import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const query = '{viewer{login contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount}}}}}}';
-const res = JSON.parse(execFileSync('gh', ['api', 'graphql', '-f', `query=${query}`], { encoding: 'utf8' }));
+const gh = (args) => execFileSync('gh', args, { encoding: 'utf8' });
+// in Actions the token belongs to a bot, so ask for the repo owner's calendar by name
+const login = process.env.GITHUB_REPOSITORY_OWNER || gh(['api', 'user', '--jq', '.login']).trim();
+const query = 'query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount}}}}}}';
+const res = JSON.parse(gh(['api', 'graphql', '-f', `query=${query}`, '-f', `login=${login}`]));
 
-const { login, contributionsCollection: cc } = res.data.viewer;
+const cc = res.data.user.contributionsCollection;
 const cal = cc.contributionCalendar;
 const days = cal.weeks.flatMap((w) => w.contributionDays);
 const counts = days.map((d) => d.contributionCount);

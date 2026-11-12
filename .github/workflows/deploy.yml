@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *' # daily, so the /about contribution calendar stays current
 
 permissions:
   contents: read
@@ -24,6 +26,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # refresh the contribution calendar; if GitHub is unreachable, keep the committed snapshot
+      - run: npm run activity || echo "::warning::contribution calendar not refreshed, using the committed snapshot"
+        env:
+          GH_TOKEN: ${{ github.token }}
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
