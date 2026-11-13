@@ -13,6 +13,14 @@ stats:
 links:
   - { label: app.hablamucho.com.br, href: 'https://app.hablamucho.com.br' }
 note: Currently open to invited teachers.
+shots:
+  - { src: /shots/habla-mucho/flashcards.jpg, video: /shots/habla-mucho/flashcards, alt: 'Student on a phone: Anki-style flashcards with spaced repetition (again, hard 1 day, easy 4 days)' }
+  - { src: /shots/habla-mucho/lab.jpg, video: /shots/habla-mucho/lab, size: [960, 600], alt: 'Speech lab: waveform, words, phonemes and pitch in sync; selecting the flagged word shows what was heard' }
+  - { src: /shots/habla-mucho/game.jpg, video: /shots/habla-mucho/game, size: [720, 600], alt: 'Reading game: hold to record, then each word comes back coloured by how it sounded' }
+  - { src: /shots/habla-mucho/connect-ai.jpg, video: /shots/habla-mucho/connect-ai, size: [960, 600], alt: 'Teacher profile, "Connect AI": a personal token plus the one-line setup for Claude Code or Codex' }
+  - { src: /shots/habla-mucho/mcp.jpg, video: /shots/habla-mucho/mcp, size: [960, 540], alt: 'The teacher''s AI building a lesson journey over MCP: reads the guide, fixes a validation error, saves a draft (replay of a real run)' }
+  - { src: /shots/habla-mucho/ai-draft.jpg, video: /shots/habla-mucho/ai-draft, size: [960, 600], alt: 'The draft appears marked "Via IA"; the teacher reviews it and previews it as a student before anything is published' }
+  - { src: /shots/habla-mucho/home.jpg, size: [960, 540], alt: 'Home page: practise Spanish out loud, for students and teachers' }
 ---
 
 It started as a personal experiment: can a computer tell a Brazilian learner *which word* they mispronounced in Spanish, and why? That experiment grew into a platform for Spanish teachers, a sort of Duolingo for schools, where the teacher stays in charge.

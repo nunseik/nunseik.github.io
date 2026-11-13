@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Tildes from '../../components/Tildes.astro';
+import Crt from '../../components/Crt.astro';
 import { byKind } from '../../lib';
 
 export async function getStaticPaths() {
@@ -41,7 +42,7 @@ const isPublic = d.repo !== 'private';
     {d.shots.length > 0 && (
       <div class="shots" tabindex="0" aria-label="Screenshots">
         {d.shots.map((s) => (
-          <figure><img src={s.src} alt={s.alt} loading="lazy" width="540" height="1170" /><figcaption>{s.alt}</figcaption></figure>
+          <Crt src={s.src} alt={s.alt} video={s.video} size={s.size} />
         ))}
       </div>
     )}

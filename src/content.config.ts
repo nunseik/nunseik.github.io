@@ -14,7 +14,9 @@ const projects = defineCollection({
     stack: z.array(z.string()),
     stats: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
     links: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
-    shots: z.array(z.object({ src: z.string(), alt: z.string() })).default([]),
+    // src is the still (the poster for a clip); video is a path without extension, with .webm and .mp4 beside it
+    // size: [w, h] of the still; omit for a phone-shaped (9:19.5) frame
+    shots: z.array(z.object({ src: z.string(), alt: z.string(), video: z.string().optional(), size: z.tuple([z.number(), z.number()]).optional() })).default([]),
     repo: z.string().default('private'), // 'private' or a public URL
     note: z.string().optional(),
   }),

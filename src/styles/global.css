@@ -216,8 +216,49 @@ img { max-width: 100%; height: auto; display: block; }
 
 .shots { display: flex; gap: 1.5ch; overflow-x: auto; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; }
 .shots figure { margin: 0; flex: 0 0 auto; width: min(220px, 60vw); scroll-snap-align: start; }
-.shots img { border: 1px solid var(--faint); width: 100%; height: auto; aspect-ratio: 9 / 19.5; object-fit: cover; object-position: top; }
+.shots img, .shots video { width: 100%; height: auto; aspect-ratio: 9 / 19.5; object-fit: cover; object-position: top; }
 .shots figcaption { color: var(--dim); font-size: 12.5px; margin-top: 0.3rem; }
+/* desktop/web frames: wider, natural aspect */
+.shots figure.wide { width: min(460px, 82vw); }
+.shots .wide img, .shots .wide video { aspect-ratio: auto; }
+
+/* ── CRT glass over screenshots and clips (components/Crt.astro) ── */
+.crt {
+  position: relative; overflow: hidden; border-radius: 6px; background: #000;
+  border: 1px solid var(--faint);
+  box-shadow: 0 0 0 3px var(--bg-alt), 0 0 18px rgba(147, 196, 125, 0.12);
+}
+.crt img, .crt video { display: block; filter: saturate(0.85) contrast(1.06) brightness(0.93); }
+.crt video { cursor: pointer; }
+/* scanlines + a faint green phosphor wash */
+.crt::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.14) 2px 3px),
+    linear-gradient(rgba(147, 196, 125, 0.06), rgba(147, 196, 125, 0.06));
+}
+/* curved-glass vignette and a soft highlight */
+.crt::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, 0.06), transparent 45%),
+    radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, 0.28) 100%);
+}
+/* the slow refresh bar rolling down the screen, on clips only */
+.crt.is-clip.on > video { animation: crt-on 0.45s steps(6) both; }
+.crt.is-clip::before {
+  background:
+    linear-gradient(to bottom, transparent 0%, rgba(207, 214, 200, 0.07) 3%, transparent 6%) 0 -10% / 100% 200% no-repeat,
+    repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.14) 2px 3px),
+    linear-gradient(rgba(147, 196, 125, 0.06), rgba(147, 196, 125, 0.06));
+  animation: crt-roll 7s linear infinite;
+}
+@keyframes crt-roll { from { background-position: 0 -100%, 0 0, 0 0; } to { background-position: 0 200%, 0 0, 0 0; } }
+.crt-fig .rec { color: var(--red); }
+@media (prefers-reduced-motion: reduce) {
+  .crt.is-clip::before { animation: none; }
+  .crt.is-clip.on > video { animation: none; }
+}
 
 /* ── animations (all optional; see scripts/anim.ts) ────── */
 /* home intro: lines are hidden until printed. The failsafe reveals them if the script never runs. */

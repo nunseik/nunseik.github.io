@@ -14,6 +14,7 @@ stats:
 links:
   - { label: mapadecrimes.ia.br, href: 'https://mapadecrimes.ia.br' }
 shots:
+  - { src: /shots/sentinel/web-map.jpg, video: /shots/sentinel/web-map, alt: 'Web map: switching between reports, risk grid and heat map, then searching an address' }
   - { src: /shots/sentinel/01-mapa.jpg, alt: 'Map of central São Paulo covered in colour-coded crime markers' }
   - { src: /shots/sentinel/05-assistente.jpg, alt: 'Sentinel assistant panel giving a critical-risk analysis of the current location' }
   - { src: /shots/sentinel/04-sentinel.jpg, alt: 'Map with Sentinel active, showing a critical risk pill at the bottom' }
