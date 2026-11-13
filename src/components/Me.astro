@@ -1,0 +1,215 @@
+---
+// Pixel-art me, drawn as ASCII grids (one char per pixel) and turned into SVG at build time.
+// Layers move on their own: the upper body breathes, the eyes blink,
+// the arm waves on click. Behaviour lives in scripts/me.ts; without it he just stands there.
+//
+// Sampled cell by cell from the reference portrait (14 px cells, colours taken from the image),
+// then cleaned up by hand: transparent backdrop, the lanyard repainted, a raised arm for the wave.
+// Palette: a/b outline · c/d/e/f shirt and hair · g/h skin · i white · j/k/l/m beard · t/u jeans
+//          R Y U G lanyard · ~ floor shadow · '.' transparent
+const P: Record<string, string> = {
+  a: '#120c0b', b: '#0b0706', c: '#3a2925', d: '#2a2222', e: '#201513', f: '#4b342d', g: '#e58e61',
+  h: '#fcbe89', i: '#f7f6f9', j: '#b97d5b', k: '#6a493a', l: '#e4ae85', m: '#885d48', t: '#232643',
+  u: '#33395c', R: '#e33810', Y: '#f2c01b', U: '#4076bd', G: '#4ca050',
+};
+
+const L = {
+  shadow: [66, String.raw`
+.........~~~~.......~........~~~
+........~~~~~.......~........~~~~
+........~~~~~.......~........~~~~~
+........~~~~~~.....~~~......~~~~~
+.........~~~~~~~~~~~~~~~~~~~~~~~
+...........~~~~~~~~~~~~~~~~~~~~
+...............~~~~~~~~~~~`],
+  legs: [56, String.raw`
+.........ahhgabuuuuuttuuuuub
+..........aaabuuuuuuttuuuuub
+.............auuuttbbattuuub
+..............buuutb.btuuuub
+.............abuuttb.btttuub
+.............abuuutb.btuuuub
+..............tttttb.btttttb
+..............buutta.atttuub
+.............atuuutb.btuuuua
+.............bbuuubb.bbuuubbb
+.............aiabbib.bibbbiib
+.............biiiiia.biiiiiib
+.............abiiiib.abiiiibb
+..............abbab...bbbabb`],
+  upper: [1, String.raw`
+....................abbba
+.............abbba..bbbcab
+............bbbbdbbbbbbbddbbbbb
+............bbbbddbbbbbbeebfffbe
+......abb...bbbbdeddbbbdeecccccbb
+.....bbb..bbbddebcccceebbedbbbdbb
+.....bccbbbffbbbeddddddbbbdbbbdbbbb
+.....bccbbfffbbbedddddddbbdbbddbbbbb
+.....beddbcdddddfdbbbbdeeecdbbbbdccbb
+.....bbeedcdbdcffbbbbbcacccccebddccffb
+...bbbbeeecbbbcfcbbbbbbeeeaaaebcdccccb
+...bbdebbbdbbbbcbbccebaeaaaaacdddbbccb
+...bdddbbeebbbbefcccbbbbbaaaaeceebbccb
+.b.acdebbeeabbbafffebbbbbabaaeccabdcb
+.bbfceeddbbbbaaafabbbbbggbbbbbdbbbebb
+.bbdddbdcceaaaaffbahhhhhhhgbbbbbbddbb..a
+.bbbddbdccebggafaaahhhhhhhgaagbbbdcbbbbba
+..bbbddbbdaageefgghhhhhhhhhgggbbaabbcfffb
+..abbccbbagghaeeahhhhhhhhhhhhhggbbbccfffb
+.aabbbcbceghhhehhhhhhhhhhhhhhhggbbfcccbab
+.bfccebccehhhhhhhhhhhhhhhhhhhhhhbcfffbbb
+.bfccbbecehhhhhhhhhhhhhhhhhhhhhhdcfcfbb
+.bbbbbbeeehhhhhhhhhhhhhhhhhhhhhhdbbabb
+..bbbbeeebhddddddhhhhhhhhddddchhedabbb
+...bbecebbgghhhhgchhhhhhcghhhgggaadddbb
+...bbeabbahhhhhhhhhhhhhhhhhhhhhhbaaddba
+...abaabaahhhhhhhhhhhhhhhhhhhhhhbbbaaa
+....aaagaahhhhhhhhhhhhhhhhhhhhhhbagba
+......ahaahhhhhhhhhhhhhhhhhhhhhhbhha
+......ehhahhhhhhhhhhhhhhhhhhhhhhhhhb
+......eghahhhhhhhhhhhhhhhhhhhhhhhhha
+......aghhhhhhhhhhhhhhhhhhhhhhhghhg
+.......aaabghhhhhhhggghhhhhhhhjbbbb
+........aaakghhhhhlkmmkhhhhhhjkbba
+..........bkjgghhkkmmmkkmhhgjjfbb
+...........akkkgkkhhhhhhkkgkffb
+...........bakkkflhhmmhhkkmffab
+............aaamfflgjjhhfkmbab
+..............aakkkkjmfffkba
+.............bbRRbbmmkkfaUbab
+...........badeRYbgabaabYRbddb
+..........aadddbGUgggggUYbeddda
+..........bdddddbUYhhhYUbbdddddb
+..........bdddddbUUabbRYbdddddda
+.........badddaddbRRbYGbbdda
+.........adcccadddbYUUGbdddb
+.........accfcadddbURRbdddda
+.........aeefcaddddaYYbdddda
+.........aghegaddddbYYbdddda
+.........ahhhgaddddbbbbddddb
+........aehhhladdddddddddddb
+........ahhhhaaddddddddddddb
+........ahhhhbbddddddddddddb
+........ahhhhhabdddddddddaba
+........aehhhhbtaaaaaabbbttb
+.........ahhgabuuuuuttuuuuub
+..........aaabuuuuuuttuuuuub`],
+  eyes: [27, String.raw`
+............babbb........bbba
+...........aiiabb........bbaib
+.............ibbb........aabi
+..............bbb........aaa
+...............aa........ee`],
+  shut: [29, String.raw`
+............bbbbb........bbbbb
+.............aaa..........aaa`],
+  arm: [45, String.raw`
+............................ddcaa
+............................cccca
+............................dccca
+............................eeeee
+............................ghhhe
+............................ghhha
+............................hhhhe
+............................hhhha
+............................hhhha
+............................hhhha
+............................hhhhb
+............................ghhgb
+............................bbaa`],
+  wave1: [29, String.raw`
+...................................aaaa
+..................................ahhhha
+..................................ahhhha
+..................................ahhhga
+..................................aghhga
+..................................ahhhga
+...................................ahhga
+...................................ahhga
+..................................ahhga
+..................................ahhga
+..................................ahhga
+.................................aahhga
+...............................aaahhhga
+............................dddcaghhhga
+............................ddccaghhhga
+............................dcceaagggaa
+............................cceea.aaaa
+............................eeea
+............................aa`],
+  wave2: [29, String.raw`
+....................................aaaa
+...................................ahhhha
+...................................ahhhha
+...................................ahhhga
+...................................aghhga
+...................................ahhhga
+....................................ahhga
+...................................ahhga
+..................................ahhga
+..................................ahhga
+..................................ahhga
+.................................aahhga
+...............................aaahhhga
+............................dddcaghhhga
+............................ddccaghhhga
+............................dcceaagggaa
+............................cceea.aaaa
+............................eeea
+............................aa`],
+} as const;
+
+// one <path> per colour per layer, built from horizontal runs of the same char
+function paths(layer: keyof typeof L) {
+  const [y0, grid] = L[layer];
+  const d: Record<string, string> = {};
+  grid.slice(1).split('\n').forEach((row, y) => {
+    for (let x = 0; x < row.length; ) {
+      const ch = row[x];
+      let n = 1;
+      while (row[x + n] === ch) n++;
+      if (P[ch] || ch === '~') d[ch] = (d[ch] ?? '') + `M${x} ${y + y0}h${n}v1h-${n}z`;
+      x += n;
+    }
+  });
+  return Object.entries(d).map(([ch, path]) => ({ fill: P[ch] ?? 'currentColor', path }));
+}
+const g = Object.fromEntries(Object.keys(L).map((k) => [k, paths(k as keyof typeof L)]));
+// 41 x 73 plus a pixel for the bob and a 1 px rim all round
+const vb = { x: -1, y: -1, w: 43, h: 75 };
+---
+<div class="me" data-me>
+  <button type="button" class="me-btn" aria-label="Pixel-art Fabio. Say hi.">
+    <svg viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} shape-rendering="crispEdges" aria-hidden="true">
+      <defs>
+        <!-- a 1 px rim (4-neighbour, like a hand-drawn pixel outline) so the dark outline reads on the dark page -->
+        <filter id="me-rim" filterUnits="userSpaceOnUse" x={vb.x} y={vb.y} width={vb.w} height={vb.h} color-interpolation-filters="sRGB">
+          <feOffset in="SourceAlpha" dx="1" result="r" />
+          <feOffset in="SourceAlpha" dx="-1" result="l" />
+          <feOffset in="SourceAlpha" dy="1" result="d" />
+          <feOffset in="SourceAlpha" dy="-1" result="u" />
+          <feMerge result="m"><feMergeNode in="r" /><feMergeNode in="l" /><feMergeNode in="d" /><feMergeNode in="u" /></feMerge>
+          <feFlood class="me-rim" />
+          <feComposite in2="m" operator="in" result="rim" />
+          <feMerge><feMergeNode in="rim" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      <g class="me-shadow">{g.shadow.map((p) => <path d={p.path} />)}</g>
+      <g filter="url(#me-rim)">
+        <g>{g.legs.map((p) => <path fill={p.fill} d={p.path} />)}</g>
+        <g class="me-up">
+          {g.upper.map((p) => <path fill={p.fill} d={p.path} />)}
+          <g class="me-open">{g.eyes.map((p) => <path fill={p.fill} d={p.path} />)}</g>
+          <g class="me-shut">{g.shut.map((p) => <path fill={p.fill} d={p.path} />)}</g>
+          <g class="me-arm">{g.arm.map((p) => <path fill={p.fill} d={p.path} />)}</g>
+          <g class="me-w1">{g.wave1.map((p) => <path fill={p.fill} d={p.path} />)}</g>
+          <g class="me-w2">{g.wave2.map((p) => <path fill={p.fill} d={p.path} />)}</g>
+        </g>
+      </g>
+    </svg>
+  </button>
+  <p class="me-say" role="status" aria-live="polite"></p>
+</div>
+
+<script src="../scripts/me.ts"></script>

@@ -4,6 +4,7 @@
 import Base from '../layouts/Base.astro';
 import Pane from '../components/Pane.astro';
 import Spark from '../components/Spark.astro';
+import Me from '../components/Me.astro';
 import { byKind } from '../lib';
 
 const { flagship, automation, experiment } = await byKind();
@@ -48,6 +49,7 @@ const topAuthor = Math.max(...authors.map((a) => a.n));
   <div class="dash">
     <div class="col">
       <Pane title="whoami" class="who">
+        <Me />
         <svg class="banner" role="img" aria-label="Fabio" viewBox={`0 0 ${cols * 6} ${rows.length * 10.5}`} style={`width:${(cols * 0.6).toFixed(2)}em`}>
           <path fill="currentColor" d={cells.join('')} />
         </svg>

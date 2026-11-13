@@ -294,6 +294,36 @@ main.wide { max-width: 1480px; }
 .pv-ctl button:hover, .pv-ctl button:focus-visible { color: var(--amber); border-color: var(--amber); outline: none; }
 
 .who .banner { margin-bottom: 1rem; }
+
+/* pixel-art me (components/Me.astro): floats top-right of whoami, the text wraps around him */
+.me { --px: 2.5px; float: right; position: relative; margin: -0.3rem 0 0.5rem 2ch; }
+.me-btn { display: block; padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; }
+.me-btn:focus-visible { outline: 1px dashed var(--amber); outline-offset: 2px; }
+.me svg { width: calc(43 * var(--px)); height: calc(75 * var(--px)); overflow: visible; }
+.me-shadow { fill: #000; opacity: 0.45; }
+.me-rim { flood-color: var(--faint); transition: flood-color 0.15s; }
+.me-btn:hover .me-rim, .me-btn:focus-visible .me-rim { flood-color: var(--dim); }
+.me-up { animation: me-bob 1.8s steps(1, end) infinite; }
+@keyframes me-bob { 50% { transform: translateY(1px); } }
+.me-shut, .me-w1, .me-w2 { visibility: hidden; }
+.blink .me-open { visibility: hidden; }
+.blink .me-shut { visibility: visible; }
+.waving .me-arm { visibility: hidden; }
+.waving .me-w1 { animation: me-flip 0.44s steps(1, end) infinite; }
+.waving .me-w2 { animation: me-flip 0.44s steps(1, end) -0.22s infinite; }
+@keyframes me-flip { 0% { visibility: visible; } 50% { visibility: hidden; } }
+.me-say {
+  position: absolute; right: calc(100% + 0.5ch); top: 0; z-index: 2; margin: 0;
+  width: max-content; max-width: 24ch; padding: 0.2rem 1ch;
+  background: var(--bg-alt); border: 1px solid var(--faint); color: var(--fg); font-size: 12.5px; line-height: 1.45;
+  visibility: hidden;
+}
+.me-say::after { content: ''; position: absolute; right: -5px; top: 0.7rem; width: 8px; height: 8px; background: var(--bg-alt); border: solid var(--faint); border-width: 1px 1px 0 0; transform: rotate(45deg); }
+.talking .me-say { visibility: visible; }
+@media (prefers-reduced-motion: reduce) {
+  .me-up { animation: none; }
+  .waving .me-w1 { animation: none; visibility: visible; }
+}
 .pane .more { margin-top: 0.6rem; }
 
 /* projects pane: a process list */
@@ -456,6 +486,7 @@ dialog h2 { margin-top: 0; }
   .ls a .desc { order: 3; grid-column: 1 / -1; padding-bottom: 0.5rem; }
   .statusline .meta { display: none; }
   .banner { font-size: 8.5px; }
+  .me { --px: 2px; margin-left: 1ch; }
   .tabline .host { display: none; }
   /* keep all four tabs on screen: drop the key hints and the .md extension on touch-sized widths */
   .tabline a { padding: 0.25rem 1ch; }
