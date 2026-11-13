@@ -260,9 +260,107 @@ img { max-width: 100%; height: auto; display: block; }
   .crt.is-clip.on > video { animation: none; }
 }
 
+/* ── dashboard home (pages/index.astro): tmux/btop panes ── */
+main.wide { max-width: 1480px; }
+.dash { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 1.4rem 1.5ch; align-items: stretch; }
+.dash .col { display: flex; flex-direction: column; gap: 1.4rem; min-width: 0; }
+.dash .col > :last-child { flex: 1; }
+.pane { position: relative; border: 1px solid var(--faint); padding: 1.1rem 1.5ch 0.7rem; min-width: 0; transition: border-color 0.15s; }
+.pane:focus-within { border-color: var(--green); }
+.pane p:last-child { margin-bottom: 0; }
+/* title set into the top border, like tmux pane titles / btop box headers */
+.pt { position: absolute; z-index: 3; top: -0.8em; left: 1ch; right: 1ch; display: flex; align-items: center; gap: 0; font-size: 13px; line-height: 1.6; pointer-events: none; white-space: nowrap; }
+.pt > * { background: var(--bg); padding: 0 0.8ch; pointer-events: auto; }
+.pt h2 { margin: 0; font-size: 13px; color: var(--fg); font-weight: 600; }
+.pt h2::after { content: none; }
+.pane:focus-within .pt h2 { color: var(--green); }
+.pt-meta { color: var(--dim); overflow: hidden; text-overflow: ellipsis; }
+.pv-ctl { margin-left: auto; display: flex; align-items: center; gap: 0.5ch; }
+.pv-ctl[hidden] { display: none; }
+.pv-ctl .pt-meta { padding: 0; }
+.pv-ctl button { background: none; border: 1px solid var(--faint); color: var(--dim); font: inherit; font-size: 11px; min-width: 30px; min-height: 26px; cursor: pointer; }
+.pv-ctl button { position: relative; }
+/* 44 px touch target without changing the look (the count between the buttons keeps them apart) */
+.pv-ctl button::after { content: ''; position: absolute; inset: -9px -7px; }
+.pv-ctl button:hover, .pv-ctl button:focus-visible { color: var(--amber); border-color: var(--amber); outline: none; }
+
+.who .banner { margin-bottom: 1rem; }
+.pane .more { margin-top: 0.6rem; }
+
+/* projects pane: a process list */
+.procs .ph, .procs .pr { display: grid; grid-template-columns: 8ch minmax(0, 24ch) 8ch minmax(0, 1fr); gap: 0 1.5ch; }
+.procs .ph { color: var(--bg); background: var(--dim); font-size: 12.5px; font-weight: 600; padding: 0 0.5ch; margin: 0 -0.5ch 0.2rem; }
+.procs .pg { color: var(--dim); font-size: 12.5px; margin-top: 0.35rem; }
+.procs .pg::before { content: '── '; }
+.procs .pr { color: var(--fg); padding: 0.05rem 0.5ch; margin: 0 -0.5ch; }
+.procs .pr > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.procs .name { color: var(--blue); font-weight: 600; }
+.procs .when, .procs .stk { color: var(--dim); }
+.procs .tag { display: none; }
+.procs .pr:hover, .procs .pr:focus-visible, .procs .pr.sel, .procs .pr.cur { background: var(--sel); color: var(--fg); }
+.procs .pr.cur { box-shadow: inset 2px 0 0 var(--amber); }
+.procs .pr:is(:hover, :focus-visible, .sel, .cur) :is(.when, .stk, .tag) { color: var(--fg); }
+
+/* preview pane: one CRT screen that follows the project cursor */
+.pv-screen { height: 330px; display: grid; place-items: center; container-type: size; }
+/* letterbox by hand: posters ignore object-fit, so the element itself takes the frame's shape */
+.pv-screen video { --ar: 1.6; width: min(100cqw, 100cqh * var(--ar)); height: min(100cqh, 100cqw / var(--ar)); object-fit: contain; }
+.pv-screen video[hidden] { display: none; }
+.nosig { display: grid; place-items: center; gap: 0.3rem; text-align: center; color: var(--dim); width: 100%; height: 100%;
+  background: repeating-linear-gradient(to bottom, #111 0 1px, #000 1px 3px); }
+.nosig[hidden] { display: none; }
+.nosig span { color: var(--fg); letter-spacing: 0.3ch; font-weight: 600; align-self: end; }
+.nosig small { align-self: start; }
+.pv-tag { margin: 0.7rem 0 0.3rem; }
+.pv-stats { display: flex; flex-wrap: wrap; gap: 0 2ch; color: var(--dim); font-size: 13px; margin-bottom: 0.4rem; }
+.pv-stats b { color: var(--amber); font-weight: 600; }
+.pv-stats:empty { display: none; }
+
+/* contact: last pane, full width, where the decision to get in touch is made */
+.dash > .contact { grid-column: 1 / -1; }
+.cline { display: flex; flex-wrap: wrap; gap: 0.2rem 3ch; margin: 0; }
+.cline > div { display: flex; gap: 1ch; white-space: nowrap; }
+.cline dt { color: var(--amber); }
+.cline dt::after { content: ':'; color: var(--faint); }
+.cline dd { margin: 0; }
+
+/* ~/.claude and memoryctl share a row */
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5ch; }
+.duo .pane { height: 100%; }
+.tree { font-size: 13.5px; gap: 0.2rem 1.5ch; }
+.tree dt { color: var(--blue); }
+.tree b, .mem b { color: var(--amber); font-weight: 600; }
+.tree .dim { display: block; font-size: 12.5px; line-height: 1.45; }
+.mem-n { margin-bottom: 0.5rem; }
+.bars { display: grid; gap: 0.15rem; font-size: 13px; }
+.bar { display: grid; grid-template-columns: 7ch 1fr 4ch; gap: 1ch; align-items: center; }
+.bar .who-l { color: var(--dim); }
+.bar .n { text-align: right; }
+.bar .track { height: 0.7em; background: var(--bg-hi); }
+.bar .track span { display: block; height: 100%; background: var(--green); }
+.mem-why { font-size: 13px; margin: 0.5rem 0 0; }
+
+@media (max-width: 1100px) {
+  .dash { grid-template-columns: minmax(0, 1fr); }
+  .dash .col { display: contents; }
+  .dash .who { order: 1; } .dash .procs { order: 2; } .dash .prev { order: 3; } .dash .act { order: 4; } .dash .duo { order: 5; } .dash > .contact { order: 6; }
+  .pv-hint { display: none; }
+}
+@media (max-width: 640px) {
+  .duo { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+  .pane { padding: 1.1rem 1.2ch 0.6rem; }
+  .procs .ph { display: none; }
+  .procs .pr { grid-template-columns: auto minmax(0, 1fr) auto; padding: 0.3rem 0.5ch; }
+  .procs .stk { display: none; }
+  .procs .when { text-align: right; }
+  .procs .pr .tag { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; grid-column: 1 / -1; color: var(--dim); white-space: normal; font-size: 13px; line-height: 1.45; }
+  .pv-screen { height: 380px; }
+}
+
 /* ── animations (all optional; see scripts/anim.ts) ────── */
 /* home intro: lines are hidden until printed. The failsafe reveals them if the script never runs. */
-.intro .buf > *:not(.shown) { visibility: hidden; animation: intro-failsafe 0s 2.5s forwards; }
+.intro :is(.buf > *, .pane, .who > p):not(.shown) { visibility: hidden; animation: intro-failsafe 0s 2.5s forwards; }
+.intro .pane.shown { animation: crt-on 0.45s steps(6) both; }
 @keyframes intro-failsafe { to { visibility: visible; } }
 .intro .banner.shown { animation: crt-on 0.45s steps(6) both; }
 @keyframes crt-on {
@@ -279,7 +377,7 @@ img { max-width: 100%; height: auto; display: block; }
   font: inherit; font-size: 12.5px; padding: 0.1rem 1ch; min-height: 28px; cursor: pointer;
 }
 .term-ctl button:hover, .term-ctl button:focus-visible { color: var(--amber); border-color: var(--amber); outline: none; }
-@media (prefers-reduced-motion: reduce) { .intro .buf > * { visibility: visible; animation: none; } }
+@media (prefers-reduced-motion: reduce) { .intro :is(.buf > *, .pane, .who > p) { visibility: visible; animation: none; } }
 
 /* ── statusline + cmdline ─────────────────────────────── */
 .status {

@@ -9,7 +9,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 async function intro() {
   const root = document.documentElement;
   if (!root.classList.contains('intro')) return;
-  const blocks = Array.from(document.querySelectorAll<HTMLElement>('.buf > *'));
+  const blocks = Array.from(document.querySelectorAll<HTMLElement>('.buf > *, .pane, .who > p'));
   const typed = document.querySelector<HTMLElement>('[data-type]');
   const text = typed?.textContent || '';
   let skipped = false;

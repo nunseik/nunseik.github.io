@@ -1,10 +1,27 @@
 ---
+// The home is a btop/tmux-style dashboard: one screen of panes on desktop, stacked on phones
+// in reading order (who I am + contact, projects, a clip, activity, tooling, memoryctl).
 import Base from '../layouts/Base.astro';
-import Ls from '../components/Ls.astro';
-import Tildes from '../components/Tildes.astro';
+import Pane from '../components/Pane.astro';
+import Spark from '../components/Spark.astro';
 import { byKind } from '../lib';
 
 const { flagship, automation, experiment } = await byKind();
+const groups = [
+  { dir: 'projects/', items: flagship },
+  { dir: 'automation/', items: automation },
+  { dir: 'lab/', items: experiment },
+];
+const procs = groups.flatMap((g) => g.items);
+
+// preview pane: the first clip of each project (or its first still), in the same order as the rows
+const preview = procs.map((p) => {
+  const s = p.data.shots.find((s) => s.video) ?? p.data.shots[0];
+  // aspect ratio of the frame (phone-shaped unless a size is given), so the screen can letterbox it
+  const shot = s ? { src: s.src, alt: s.alt, video: s.video, ar: s.size ? s.size[0] / s.size[1] : 540 / 1170 } : null;
+  return { id: p.id, tagline: p.data.tagline, stats: p.data.stats.slice(0, 3), shot };
+});
+const first = preview[0];
 
 const banner = String.raw`
  ███████  █████  ██████  ██  ██████
@@ -18,61 +35,119 @@ const banner = String.raw`
 const rows = banner.slice(1).split('\n');
 const cols = Math.max(...rows.map((r) => r.length));
 const cells = rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '█' ? [`M${x * 6} ${y * 10.5}h6.05v10.55h-6.05z`] : [])));
+
+// memoryctl: the aggregate numbers approved for publishing (see /tools/memoryctl/)
+const authors = [
+  { who: 'codex', n: 360 },
+  { who: 'claude', n: 305 },
+  { who: 'me', n: 131 },
+];
+const topAuthor = Math.max(...authors.map((a) => a.n));
 ---
-<Base title="Fabio Fernandes" file="~/index.md" tab="home">
-  <div class="buf">
-    <svg class="banner nonum" role="img" aria-label="Fabio" viewBox={`0 0 ${cols * 6} ${rows.length * 10.5}`} style={`width:${(cols * 0.6).toFixed(2)}em`}>
-      <path fill="currentColor" d={cells.join('')} />
-    </svg>
+<Base title="Fabio Fernandes" file="~/index.md" tab="home" filetype="dashboard" wide>
+  <div class="dash">
+    <div class="col">
+      <Pane title="whoami" class="who">
+        <svg class="banner" role="img" aria-label="Fabio" viewBox={`0 0 ${cols * 6} ${rows.length * 10.5}`} style={`width:${(cols * 0.6).toFixed(2)}em`}>
+          <path fill="currentColor" d={cells.join('')} />
+        </svg>
+        <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> <span data-type>whoami</span></p>
+        <p>
+          I'm <strong>Fabio</strong>. I build software end to end: data pipelines, Go and Python backends,
+          web and mobile apps. Lately I also build the tooling that lets AI agents work on those
+          projects safely: <em>MCP servers</em>, <em>skills</em>, review gates, <a href="/tools/memoryctl/">project memory</a>.
+        </p>
+        <p><a href="/about/#contact">→ contact me</a> <span class="dim">(email, LinkedIn, WhatsApp<span class="keyhint"> · or press 4</span>)</span></p>
+        <p><a href="/work/">→ hire me for a project</a> <span class="dim">(automations, websites, apps, AI, prototypes)</span></p>
+        <p class="dim">
+          I like things small and DIY: one SQLite file instead of a cluster, a tunnel instead of a load
+          balancer, a free-tier VM instead of a bill, a cooling mod instead of a new laptop. I live in a
+          terminal, and you're in vim now. Press <code>?</code> for the keys.
+        </p>
+      </Pane>
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> <span data-type>whoami</span></p>
-    <p>
-      I'm <strong>Fabio</strong>. I build software end to end: data pipelines, Go and Python backends,
-      web and mobile apps. Lately I also build the tooling that lets AI agents work on those
-      projects safely: <em>MCP servers</em>, <em>skills</em>, review gates, <a href="/tools/memoryctl/">project memory</a>.
-    </p>
-    <p><a href="/about/#contact">→ contact me</a> <span class="dim">(email, LinkedIn, WhatsApp<span class="keyhint"> · or press 4</span>)</span></p>
-    <p><a href="/work/">→ hire me for a project</a> <span class="dim">(automations, websites, apps, AI, prototypes)</span></p>
-    <p class="dim">
-      I like things small and DIY: one SQLite file instead of a cluster, a tunnel instead of a load
-      balancer, a free-tier VM instead of a bill, a cooling mod instead of a new laptop. I live in a
-      terminal, and you're in vim now. Press <code>?</code> for the keys.
-    </p>
+      <Pane title="projects" meta={`${procs.length} total`} class="procs">
+        <div class="ph" aria-hidden="true"><span>STAT</span><span>NAME</span><span>SINCE</span><span>STACK</span></div>
+        {groups.map((g) => (
+          <>
+            <div class="pg" aria-hidden="true">{g.dir}</div>
+            {g.items.map((p) => (
+              <a class="pr" href={`/projects/${p.id}/`} data-proc={procs.indexOf(p)} data-nav={`${p.id}/ — ${p.data.tagline}`}>
+                <span class={`badge ${p.data.status}`}>{p.data.status}</span>
+                <span class="name">{p.id}/</span>
+                <span class="when">{p.data.started}</span>
+                <span class="stk">{p.data.stack.slice(0, 4).join(' · ')}</span>
+                <span class="tag">{p.data.tagline}</span>
+              </a>
+            ))}
+          </>
+        ))}
+        <p class="more"><a href="/projects/">→ all projects</a> <span class="dim">(or press 2)</span></p>
+      </Pane>
+    </div>
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> ls -l projects/</p>
-    <Ls items={flagship} />
+    <div class="col">
+      <Pane title="activity" meta="github · 12 months" class="act">
+        <Spark />
+      </Pane>
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> ls -l automation/</p>
-    <Ls items={automation} />
+      <Pane title="preview" class="prev">
+        <span slot="title" class="pt-meta" data-pv-name>{first.id}/</span>
+        <span slot="title" class="pv-ctl" hidden>
+          <button type="button" data-pv="-1" aria-label="Previous project">◀</button><span class="pt-meta" data-pv-count>1/{preview.length}</span><button type="button" data-pv="1" aria-label="Next project">▶</button>
+        </span>
+        <div class={`crt pv-screen${first.shot?.video ? ' is-clip' : ''}`}>
+          <video muted loop playsinline preload="none" poster={first.shot?.src} aria-label={first.shot?.alt} data-crt hidden={!first.shot} style={first.shot ? `--ar:${first.shot.ar.toFixed(4)}` : undefined}>
+            {first.shot?.video && <source src={`${first.shot.video}.webm`} type="video/webm" />}
+            {first.shot?.video && <source src={`${first.shot.video}.mp4`} type="video/mp4" />}
+          </video>
+          <div class="nosig" hidden={!!first.shot}><span>NO SIGNAL</span><small>no recording for this one</small></div>
+        </div>
+        <p class="pv-tag" data-pv-tag>{first.tagline}</p>
+        <p class="pv-stats" data-pv-stats>{first.stats.map((s) => <span><b>{s.value}</b> {s.label}</span>)}</p>
+        <p class="pv-open"><a href={`/projects/${first.id}/`} data-pv-open>→ open {first.id}.md</a> <span class="dim pv-hint">hover or j/k a project to switch</span></p>
+      </Pane>
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> ls -l lab/</p>
-    <Ls items={experiment} />
+      <div class="duo">
+        <Pane title="~/.claude" class="claude">
+          <dl class="kv tree">
+            <dt>mcp/</dt><dd><b>4</b> servers <span class="dim">production ops, teachers, finances, Habla Mucho ops</span></dd>
+            <dt>skills/</dt><dd><b>5</b> <span class="dim">ux-review, code-review, logic-review, format-bcg, bcg-refresh</span></dd>
+            <dt>agents/</dt><dd><b>4</b> <span class="dim">logic-reviewer, security-auditor, red-team, commit-push</span></dd>
+            <dt>commands/</dt><dd><b>3</b> <span class="dim">on-device, via Ollama</span></dd>
+          </dl>
+          <p class="more"><a href="/tools/">→ ai-tooling.md</a> <span class="dim">(or 3)</span></p>
+        </Pane>
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> tree -L 1 ~/.claude</p>
-    <pre class="nonum" style="margin-top:-0.5rem">{`~/.claude
-├── mcp/       4 custom MCP servers (production ops, teachers, finances, Habla Mucho ops)
-├── skills/    ux-review · code-review · logic-review · format-bcg · bcg-refresh
-├── agents/    logic-reviewer · security-auditor · red-team · commit-push
-└── commands/  /local-review · /local-security · /ask-local … (on-device, via Ollama)`}</pre>
-    <p><a href="/tools/">→ open ai-tooling.md</a> <span class="dim">(or press 3)</span></p>
+        <Pane title="memoryctl" meta="7 months" class="mem">
+          <p class="mem-n"><b>799</b> items · <b>121</b> decisions</p>
+          <div class="bars" role="img" aria-label="Written by Codex 360, Claude 305, me 131">
+            {authors.map((a) => (
+              <div class="bar" aria-hidden="true">
+                <span class="who-l">{a.who}</span>
+                <span class="track"><span style={`width:${((a.n / topAuthor) * 100).toFixed(1)}%`}></span></span>
+                <span class="n">{a.n}</span>
+              </div>
+            ))}
+          </div>
+          <p class="dim mem-why">one shared memory, so agents never start cold</p>
+          <p class="more"><a href="/tools/memoryctl/">→ how it works</a></p>
+        </Pane>
+      </div>
+    </div>
 
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> memoryctl --help</p>
-    <p>
-      <strong>memoryctl</strong> is the project memory I built so one person and several AI agents
-      could build a seven-part app together: 799 decisions, blockers and checkpoints shared by
-      Codex, Claude and me. <a href="/tools/memoryctl/">→ how it works</a>
-    </p>
-
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> cat contact.txt</p>
-    <dl class="kv">
-      <dt>email</dt><dd><a href="mailto:nunseik@gmail.com">nunseik@gmail.com</a></dd>
-      <dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/dantasfabio/">in/dantasfabio</a></dd>
-      <dt>whatsapp</dt><dd><a href="https://wa.me/5511971058388">+55 11 97105-8388</a></dd>
-      <dt>github</dt><dd><a href="https://github.com/nunseik">nunseik</a></dd>
-      <dt>freelance</dt><dd><a href="/work/">work.md</a> <span class="dim">· what I build for small businesses</span></dd>
-    </dl>
-
-    <p><span class="prompt">fabio@nunseik <span class="path">~</span> $</span> <span class="cursor" aria-hidden="true">&nbsp;</span></p>
-    <Tildes n={5} />
+    <Pane title="contact.txt" class="contact">
+      <dl class="kv cline">
+        <div><dt>email</dt><dd><a href="mailto:nunseik@gmail.com">nunseik@gmail.com</a></dd></div>
+        <div><dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/dantasfabio/">in/dantasfabio</a></dd></div>
+        <div><dt>whatsapp</dt><dd><a href="https://wa.me/5511971058388">+55 11 97105-8388</a></dd></div>
+        <div><dt>github</dt><dd><a href="https://github.com/nunseik">nunseik</a></dd></div>
+        <div><dt>freelance</dt><dd><a href="/work/">work.md</a></dd></div>
+      </dl>
+    </Pane>
   </div>
+
+  <script type="application/json" id="preview-data" set:html={JSON.stringify(preview)} />
 </Base>
+
+<script src="../scripts/dash.ts"></script>

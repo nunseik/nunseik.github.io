@@ -1,0 +1,19 @@
+---
+// One tmux/btop-style pane on the dashboard home: a box-drawn border with the title set into it.
+// The border lights up green while focus (Tab, j/k, a click) is inside, like tmux's active pane.
+interface Props {
+  title: string;
+  meta?: string; // dim text after the title, e.g. a count
+  class?: string;
+}
+const { title, meta, class: cls = '' } = Astro.props;
+const id = `pane-${title.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}`;
+---
+<section class={`pane ${cls}`} aria-labelledby={id}>
+  <div class="pt">
+    <h2 id={id}>{title}</h2>
+    {meta && <span class="pt-meta">{meta}</span>}
+    <slot name="title" />
+  </div>
+  <slot />
+</section>

@@ -8,9 +8,10 @@ interface Props {
   description?: string;
   tab?: 'home' | 'projects' | 'tools' | 'about' | null;
   filetype?: string;
+  wide?: boolean; // full-width buffer (the dashboard home)
 }
 
-const { title, file, description = 'Portfolio of Fabio Fernandes: software, automation and AI tooling.', tab = null, filetype = 'markdown' } = Astro.props;
+const { title, file, description = 'Portfolio of Fabio Fernandes: software, automation and AI tooling.', tab = null, filetype = 'markdown', wide = false } = Astro.props;
 
 const tabs = [
   { id: 'home', label: 'index.md', href: '/' },
@@ -63,7 +64,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <span class="host">fabio@nunseik</span>
     </nav>
 
-    <main id="buf">
+    <main id="buf" class:list={{ wide }}>
       <slot />
     </main>
 
