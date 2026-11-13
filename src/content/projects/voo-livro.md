@@ -9,6 +9,8 @@ stack: [Next.js 16, React 19, TypeScript, Tailwind 4, Supabase, PostgreSQL RLS, 
 links:
   - { label: voo-livro.vercel.app, href: 'https://voo-livro.vercel.app' }
 note: Early prototype, open to approved testers.
+shots:
+  - { src: /shots/voo-livro/found.jpg, video: /shots/voo-livro/found, alt: 'Found a book: typing the code from its label opens that copy and its logbook' }
 ---
 
 A bit like Goodreads, but for physical copies that travel. Someone "sets a book free" on a bench or in a café. Whoever finds it scans the QR code inside, reads it, writes in that copy's logbook and lets it go again. Everyone who held the book can follow its flight.

@@ -7,6 +7,8 @@ started: 2026-09
 status: local
 stack: [Swift, Core Audio, whisper.cpp, Whisper large-v3-turbo, Silero VAD, zsh]
 note: Fork of JoanClaverol/audio-recorder. The recorder and transcription engine are his work; the workflow on top is mine.
+shots:
+  - { src: /shots/audio-recorder/transcribe.jpg, video: /shots/audio-recorder/transcribe, size: [960, 374], alt: 'Transcribing a two-track call locally: system audio becomes Others, the mic becomes Me (demo call, synthetic voices)' }
 ---
 
 I wanted a record of what was said in meetings and in my own therapy sessions, without sending a single second of audio to the cloud.

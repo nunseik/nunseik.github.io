@@ -9,6 +9,8 @@ stack: [Next.js 16, TypeScript, Tailwind 4, shadcn/ui, Dexie.js, Web Speech API,
 repo: https://github.com/nunseik/accessible-tools
 links:
   - { label: accessible-tools-ten.vercel.app, href: 'https://accessible-tools-ten.vercel.app' }
+shots:
+  - { src: /shots/accessible-tools/recipe.jpg, video: /shots/accessible-tools/recipe, alt: 'Opening a recipe, scaling it to 2×, 3× and ½×, then hands-free cook mode one step at a time' }
 ---
 
 A mobile-first toolkit for people who struggle with tiny buttons: elderly users, people with special needs, and workers whose hands are busy or dirty (cooks, plumbers, construction workers).

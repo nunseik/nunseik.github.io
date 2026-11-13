@@ -11,6 +11,8 @@ stats:
   - { label: sustained SoC power, value: +34% }
   - { label: sustained clock, value: +34% }
   - { label: sudo required, value: none }
+shots:
+  - { src: /shots/thermal-bench-macos/report.jpg, video: /shots/thermal-bench-macos/report, size: [960, 600], alt: 'The report from the real runs: baseline vs modded, verdict against run-to-run noise, then the power curves' }
 ---
 
 The M3 MacBook Air has no fan, so under sustained load it throttles. The classic DIY fix is to **bridge the internal cooling shield to the aluminium bottom case**, so the whole chassis works as a heat spreader. I did the mod, and then wanted numbers instead of vibes.

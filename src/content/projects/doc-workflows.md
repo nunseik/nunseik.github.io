@@ -6,6 +6,8 @@ order: 11
 started: 2026-10
 status: done
 stack: [Python, OOXML, Ruby, RTF, Swift, Claude Code, Codex]
+shots:
+  - { src: /shots/doc-workflows/verify.jpg, video: /shots/doc-workflows/verify, size: [960, 568], alt: 'The shared PT→ES glossary, then the batch check over all ten translated DOCX files' }
 ---
 
 Small, real jobs where AI did the heavy lifting and scripts kept it honest.

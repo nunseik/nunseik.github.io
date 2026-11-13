@@ -8,6 +8,8 @@ status: done
 stack: [HTML, JavaScript, Node.js, Playwright, Claude Code skills, MCP]
 repo: https://github.com/nunseik/wysiwyg-wp-editor
 note: Built for my own use. It was the last thing I worked on before leaving.
+shots:
+  - { src: /shots/class-central-formatter/banner-studio.jpg, video: /shots/class-central-formatter/banner-studio, size: [960, 540], alt: 'Banner Studio: type a topic, the illustration follows; switch themes with a live preview of the exported PNG' }
 ---
 
 At Class Central I wrote and maintained *Best Courses Guides*: long articles comparing online courses on a topic. Formatting them for WordPress by hand was slow and error-prone, so I automated the boring parts.

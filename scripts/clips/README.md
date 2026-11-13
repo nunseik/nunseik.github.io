@@ -16,6 +16,18 @@ poster JPEG into `public/shots/<project>/` (`encode.sh`, needs ffmpeg). Uses the
     node scripts/clips/habla-revoke-demo-tokens.mjs            # revoke the tokens the takes created
     vhs scripts/clips/mcp.tape                                 # scripted replay of the MCP calls (mcp-replay.sh)
 
+    # other projects
+    node scripts/clips/higgs.mjs                       # ~/workspace/higgs-talk/index.html
+    node scripts/clips/accessible-tools.mjs            # public site
+    node scripts/clips/voo-livro.mjs                   # public prototype, demo copy DEM0-A001
+    node scripts/clips/thermal-bench.mjs               # rebuilds the baseline-vs-mod report in a temp copy
+    node scripts/clips/banner-studio.mjs               # wysiwyg-wp-editor/banner-studio: `npm run studio` (:4321)
+    scripts/clips/voice-clone.sh                       # real Qwen3-TTS run (~25 s), wait sped up 12x; wavebars.py
+    scripts/clips/audio-recorder.sh                    # synthetic two-voice call (`say`), real local Whisper
+    scripts/clips/doc-workflows.sh                     # translate-articles, in a temp copy
+
+The shell scripts create their demo data and remove it afterwards. Note: `sed` on this machine is GNU sed.
+
 The dev database is full of smoke-test leftovers; `habla-platform.mjs` hides them from JSON responses while
 recording instead of deleting anything.
 
