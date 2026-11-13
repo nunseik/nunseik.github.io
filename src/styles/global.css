@@ -228,7 +228,10 @@ img { max-width: 100%; height: auto; display: block; }
   border: 1px solid var(--faint);
   box-shadow: 0 0 0 3px var(--bg-alt), 0 0 18px rgba(147, 196, 125, 0.12);
 }
-.crt img, .crt video { display: block; filter: saturate(0.85) contrast(1.06) brightness(0.93); }
+.crt img, .crt video { display: block; }
+/* the grade goes on stills only: a CSS filter on <video> knocks Safari off its hardware video path (slow first frame,
+   stutter), so clips get the dimming from the glass layer below instead */
+.crt img { filter: saturate(0.85) contrast(1.06) brightness(0.93); }
 .crt video { cursor: pointer; }
 /* scanlines + a faint green phosphor wash */
 .crt::before {
@@ -243,6 +246,12 @@ img { max-width: 100%; height: auto; display: block; }
   background:
     radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, 0.06), transparent 45%),
     radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, 0.28) 100%);
+}
+.crt:has(> video)::after {
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, 0.06), transparent 45%),
+    radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, 0.28) 100%),
+    rgba(0, 0, 0, 0.07);
 }
 /* the slow refresh bar rolling down the screen, on clips only */
 .crt.is-clip.on > video { animation: crt-on 0.45s steps(6) both; }
