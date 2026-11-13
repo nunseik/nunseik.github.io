@@ -23,33 +23,23 @@ shots:
   - { src: /shots/habla-mucho/home.jpg, size: [960, 540], alt: 'Home page: practise Spanish out loud, for students and teachers' }
 ---
 
-It started as a personal experiment: can a computer tell a Brazilian learner *which word* they mispronounced in Spanish, and why? That experiment grew into a platform for Spanish teachers, a sort of Duolingo for schools, where the teacher stays in charge.
+A pronunciation experiment that became a classroom platform for Spanish teachers: Duolingo for schools, with the teacher in charge.
 
 ## Pronunciation, word by word
+A student reads aloud. The pipeline cleans the audio (**Silero VAD**), transcribes it (**Whisper**), aligns every phoneme and compares it with a native reference (**Qwen3-TTS** / **Piper**). **Praat** measures intonation and fluency.
 
-A student reads a text aloud. The pipeline then:
-
-1. cleans the audio and trims silence (**Silero VAD**)
-2. transcribes it with **Whisper**
-3. force-aligns every phoneme against the expected text
-4. compares each one with a native reference read by **Qwen3-TTS** or **Piper**, generated once, validated by Whisper and regenerated automatically if it fails
-5. measures intonation, volume and fluency with **Praat** (via parselmouth)
-
-The report shows the full text with each word clickable. Red means strong acoustic evidence of a problem, yellow means "please review", and green only means *no problem detected*. The model only proposes hypotheses: the teacher has the final word and can annotate every alert.
+- **Red:** strong evidence of a problem. **Yellow:** please review. **Green:** nothing detected.
+- The model only suggests. The teacher has the final word on every alert.
 
 ## The platform
-
 - Classes, assignments and deadlines
-- **Anki-style flashcards**, a reading game, a free-speech mode (beta) and light gamification
-- Magic-link login, encrypted daily backups with a tested restore, automated deploys to a small VPS
+- **Anki-style flashcards**, a reading game, free speech (beta), light gamification
+- Magic-link login, encrypted daily backups with tested restores, automated deploys
 
 ## Teachers bring their own AI
+What I'm proudest of: teachers connect *their* AI (Claude, ChatGPT…) through an **MCP server I wrote**. It reads the format guide, checks the lesson with the same validator as the UI and saves a **draft**.
 
-The part I am proudest of: teachers can connect *their* AI assistant (Claude, ChatGPT, …) to Habla Mucho through an **MCP server I wrote** (stateless streamable HTTP). They ask it to create a lesson journey, and it reads the format guide, validates the content with the same validator as the UI and saves it as a **draft**.
+- Each token reaches only that teacher's journeys, with hourly and daily limits.
+- The AI can't publish or reach students. A person reviews every draft first.
 
-Guardrails I designed in from day one:
-
-- each personal token can only touch that teacher's own journeys, with per-day and per-hour rate limits
-- the AI can never publish anything or reach students. A human reviews every draft on screen first
-
-There is also an internal **ops plugin** (MCP server + skill) that lets my coding agents deploy, check health and roll back through structured tools.
+An internal **ops plugin** (MCP + skill) lets my coding agents deploy, check health and roll back.

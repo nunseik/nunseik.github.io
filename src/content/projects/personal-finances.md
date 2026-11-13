@@ -15,7 +15,7 @@ shots:
   - { src: /shots/personal-finances/bot.jpg, video: /shots/personal-finances/bot, size: [480, 1000], alt: 'Logging an expense by chat, the bot confirming it, /recent, then the Telegram Mini App dashboard (values blurred)' }
 ---
 
-Spreadsheets never stuck for me. A bot I can text in five seconds did.
+Finance apps keep what you feed them and don't let it back out. I wanted to own my data, so I built my own system: my database, my rules, export anything. I've used it every day since June 2026.
 
 ## How it works
 
@@ -31,11 +31,12 @@ Spreadsheets never stuck for me. A bot I can text in five seconds did.
   Claude / Codex ──► MCP server ──(SSH)──► same SQLite, live
 ```
 
-- **Logging:** commands like `/add 150 BRL expense mercado`, or just free text such as *"spent R$50 on groceries"*, which gets parsed automatically. It also handles transfers, recurring bills, budgets with progress bars, ETF holdings and splitting a shared credit card.
-- **Dashboard:** a read-only Telegram Mini App (balances, spending by category, monthly summary). The web server runs *inside* the bot process and is exposed through a Cloudflare quick tunnel: no open ports, no domain, no extra service. The dashboard link refreshes itself and only works for my Telegram user.
-- **Monthly check-ups with AI:** an MCP server runs over SSH, so Claude or Codex can query the live database (balances, summaries, budget status) and do the heavier analysis with me: trends, anomalies, "where did March go?".
+- **Logging:** `/add 150 BRL expense mercado`, or free text like *"spent R$50 on groceries"*. Also transfers, recurring bills, budgets, ETFs and a shared card split.
+- **Dashboard:** a read-only Telegram Mini App, served from inside the bot through a Cloudflare tunnel. No open ports, and only my account can open it.
+- **AI check-ups:** an MCP server over SSH lets Claude or Codex query the live data for trends and "where did March go?".
 - **Deploys:** push to `main` → GitHub Actions → systemd restart.
 
-## Why I like it
-
-It is deliberately small and DIY: one SQLite file, one process, a free VM and a tunnel. I have used it every day since June 2026.
+## Why I built it
+- **My data, my file:** everything lives in one SQLite database I control. I can export it, query it or move it anywhere.
+- **No lock-in:** no app deciding what I can see or download.
+- **Small and DIY:** one process, a free VM and a tunnel. Texting a bot takes five seconds, so I actually keep using it.
