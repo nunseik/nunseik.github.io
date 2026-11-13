@@ -1,6 +1,6 @@
 ---
 title: Personal Finances
-tagline: Telegram bot + MCP server + tiny dashboard. My money, on a free server, queried by AI
+tagline: Telegram bot + MCP server + tiny dashboard. My finance data, owned by me and queried by AI
 kind: flagship
 order: 3
 started: 2026-06
