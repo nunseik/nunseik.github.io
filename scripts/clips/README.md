@@ -25,6 +25,7 @@ poster JPEG into `public/shots/<project>/` (`encode.sh`, needs ffmpeg). Uses the
     scripts/clips/voice-clone.sh                       # real Qwen3-TTS run (~25 s), wait sped up 12x; wavebars.py
     scripts/clips/audio-recorder.sh                    # synthetic two-voice call (`say`), real local Whisper
     scripts/clips/doc-workflows.sh                     # translate-articles, in a temp copy
+    scripts/clips/finances.sh ~/Downloads/<video>.mp4  # Fabio's own phone recording; blurs all real values
 
 The shell scripts create their demo data and remove it afterwards. Note: `sed` on this machine is GNU sed.
 

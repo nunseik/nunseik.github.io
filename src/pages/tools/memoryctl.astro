@@ -3,33 +3,34 @@ import Base from '../../layouts/Base.astro';
 import Tildes from '../../components/Tildes.astro';
 
 // The session replay. Lines starting with "$ " are typed; the rest print as output.
-// Titles below are illustrative (built from facts already on this site); real memory contents stay private.
+// Real `memoryctl context` output (2026-11-12), trimmed to titles; titles reviewed by me before publishing.
+// The closing checkpoint is an example of the write step.
 const replay = [
-  '$ memoryctl context --project mapa-crimes --query "android battery"',
+  '$ memoryctl context --project mapa-crimes-cometidos --query "ios sleep live activity"',
   '{',
   '  "mode": "compact",',
-  '  "latest_checkpoint": {',
-  '    "item_type": "checkpoint", "area": "mobile",',
-  '    "title": "Motion-aware GPS shipped; overnight drain still unmeasured"',
-  '  },',
+  '  "latest_checkpoint": { "area": "nlu", "title": "#797 em prod (aa4b773)" },',
   '  "open_blockers": [',
-  '    { "title": "Background wake on iOS is best-effort, not guaranteed" }',
+  '    { "title": "iOS cannot deterministically clear Dormindo at sleep end under suspension" }',
   '  ],',
   '  "recent_decisions": [',
-  '    { "title": "Adapt GPS frequency to still / walking / driving" },',
-  '    { "title": "Location never leaves the device" }',
+  '    { "title": "Use one broad iOS Live Activity standby state across sleep and post-sleep waiting" },',
+  '    { "title": "Do not show a dedicated Dormindo Live Activity state on iOS" }',
   '  ],',
   '  "active_tasks": [',
-  '    { "title": "Overnight Android battery verification" }',
+  '    { "title": "Validate iOS standby Live Activity behavior after sleep in field use" }',
   '  ],',
-  '  "relevant_hits": [ "…3 semantic matches (e5, local)" ]',
+  '  "relevant_hits": [',
+  '    { "type": "note", "title": "iOS notification regression: AlertConfig silently killed in 3399fd8" },',
+  '    { "type": "checkpoint", "title": "End session: ship broad standby Live Activity state for iOS sleep" }',
+  '  ]',
   '}',
   '',
   '$ # …the agent works…',
-  '$ memoryctl checkpoint --project mapa-crimes --title "Battery check done" --created-by claude',
-  '{ "id": 800, "item_type": "checkpoint", "status": "active" }',
+  '$ memoryctl checkpoint --project mapa-crimes-cometidos --area mobile --title "Standby state verified on device" --created-by claude',
+  '{ "id": 801, "item_type": "checkpoint", "status": "active" }',
 ];
----
+------
 <Base title="memoryctl" file="~/ai-tooling/memoryctl.md" tab="tools" description="memoryctl: the project memory that let me build a many-part app solo, with AI agents that resume each part with the right context.">
   <div class="buf">
     <p class="dim nonum">" ai tooling · <a href="/tools/">../</a></p>
@@ -46,7 +47,7 @@ const replay = [
     </div>
 
     <h2>how a session starts</h2>
-    <p class="dim">An example session. Commands and output shape are real; the titles are illustrative, and the real memory stays private.</p>
+    <p class="dim">Real output from my memory, trimmed to titles ("Dormindo" is the app’s sleep state). The rest of the memory stays private.</p>
     <pre class="term nonum" data-replay aria-label="Terminal: an agent loads memory context, works, then writes a checkpoint">{replay.map((l) =>
       l.startsWith('$ ')
         ? <span class="ln in"><span class="prompt">$ </span><span class="typed">{l.slice(2)}</span>{'\n'}</span>

@@ -10,7 +10,9 @@ stats:
   - { label: monthly cost, value: R$0 }
   - { label: MCP tools, value: '11' }
   - { label: commits, value: '52' }
-note: Personal tool. Screens are not shown because they contain real financial data.
+note: Personal tool, in daily use. The clip is a real session on my phone, so every amount, balance and holding is blurred.
+shots:
+  - { src: /shots/personal-finances/bot.jpg, video: /shots/personal-finances/bot, size: [480, 1000], alt: 'Logging an expense by chat, the bot confirming it, /recent, then the Telegram Mini App dashboard (values blurred)' }
 ---
 
 Spreadsheets never stuck for me. A bot I can text in five seconds did.
