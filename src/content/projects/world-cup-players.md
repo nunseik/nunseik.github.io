@@ -11,6 +11,8 @@ stats:
   - { label: tournaments, value: 1970–2026 }
   - { label: commits in 2 days, value: '35' }
   - { label: test files, value: '11' }
+shots:
+  - { src: /shots/world-cup-players/stats.jpg, video: /shots/world-cup-players/stats, size: [960, 594], alt: 'The stats table for 2022 served by the API: sorted by goals, re-sorted by assists, then filtered to Argentina' }
 ---
 
 A data pipeline plus an API, built over two days in June 2026, while the World Cup was on.

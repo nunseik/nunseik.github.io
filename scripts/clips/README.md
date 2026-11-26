@@ -26,6 +26,14 @@ poster JPEG into `public/shots/<project>/` (`encode.sh`, needs ffmpeg). Uses the
     scripts/clips/audio-recorder.sh                    # synthetic two-voice call (`say`), real local Whisper
     scripts/clips/doc-workflows.sh                     # translate-articles, in a temp copy
     scripts/clips/finances.sh ~/Downloads/<video>.mp4  # Fabio's own phone recording; blurs all real values
+    CLIP_VENV=<venv> scripts/clips/wp-semantic-search.sh  # real retrieval eval in a temp copy; index build sped up 12x
+    scripts/clips/pi-agent.sh                          # report from the saved results, fresh clone of the private repo
+    node scripts/clips/world-cup-players.mjs           # local only: Postgres from tests/fixtures/espn_scoring_2022.html,
+                                                       # a local key, `world-cup-api --port 8010`, `vite --port 5199`
+                                                       # (DEV_API_PROXY=http://localhost:8010, VITE_API_KEY in frontend/.env.local)
+
+If Playwright's own browsers are missing (`~/Library/Caches/ms-playwright`), launch with `{channel: 'chrome'}`
+like world-cup-players.mjs does, or run `npx playwright install chromium` in `scripts/ux`.
 
 The shell scripts create their demo data and remove it afterwards. Note: `sed` on this machine is GNU sed.
 

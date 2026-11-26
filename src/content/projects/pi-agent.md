@@ -10,6 +10,8 @@ stats:
   - { label: benchmark runs passed, value: 38/42 }
   - { label: model loaded, value: ~7 GB }
   - { label: decode speed, value: 46 tok/s }
+shots:
+  - { src: /shots/pi-agent/report.jpg, video: /shots/pi-agent/report, size: [1200, 434], alt: 'The benchmark report rebuilt from the 805 saved runs: pass rate, phantom tool calls and memory per model (the e2b row adds up every experiment and setting), then prefill and decode speed' }
 ---
 
 A fun week of experiments in June 2026: run an agentic coding workflow (read, edit, run the tests, fix) with the [Pi](https://github.com/badlogic/pi-mono) agent framework and local Ollama models on an M3 MacBook Air. That machine has 16 GB shared between the OS, the weights and the KV cache, and only about 10–11 GB of it is usable before macOS memory pressure kicks in. It was a lot harder to get working than I expected.

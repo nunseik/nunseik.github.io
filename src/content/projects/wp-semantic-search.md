@@ -13,6 +13,8 @@ stats:
   - { label: recall@5 (multilingual-e5), value: '0.989' }
   - { label: recall@5 (English MiniLM), value: '0.700' }
   - { label: eval questions, value: '45' }
+shots:
+  - { src: /shots/wp-semantic-search/eval.jpg, video: /shots/wp-semantic-search/eval, size: [960, 568], alt: 'A real run of the retrieval eval: it builds a fresh index from the 100-article snapshot, checks the 45 questions (one partial miss), and passes with recall@5 0.989. The index build is sped up 12x' }
 ---
 
 A RAG command-line tool for WordPress sites. I built it in April 2025, and in November 2026 I came back to fix what I'd skipped the first time: chunking, citations and a way to measure retrieval.
