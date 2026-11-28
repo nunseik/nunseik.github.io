@@ -7,8 +7,10 @@ started: 2026-10
 status: beta
 stack: [Python, FastAPI, PostgreSQL, React, wavesurfer.js, Whisper, Qwen3-TTS, Piper, Praat/parselmouth, Silero VAD, MCP]
 stats:
-  - { label: commits in ~5 weeks, value: '360+' }
-  - { label: lines of code, value: ~77k }
+  - { label: commits in 44 days, value: '394' }
+  - { label: first commit to public beta, value: 9 days }
+  - { label: lines of product code, value: ~55k }
+  - { label: lines of automated tests, value: ~46k }
   - { label: custom MCP servers, value: '2' }
 links:
   - { label: app.hablamucho.com.br, href: 'https://app.hablamucho.com.br' }
@@ -23,7 +25,7 @@ shots:
   - { src: /shots/habla-mucho/home.jpg, size: [960, 540], alt: 'Home page: practise Spanish out loud, for students and teachers' }
 ---
 
-A pronunciation experiment that became a classroom platform for Spanish teachers: Duolingo for schools, with the teacher in charge.
+A pronunciation experiment that became a classroom platform for Spanish teachers: Duolingo for schools, with the teacher in charge. Nine days passed between the first commit and the public beta.
 
 ## Pronunciation, word by word
 A student reads aloud. The pipeline cleans the audio (**Silero VAD**), transcribes it (**Whisper**), aligns every phoneme and compares it with a native reference (**Qwen3-TTS** / **Piper**). **Praat** measures intonation and fluency.
@@ -35,6 +37,13 @@ A student reads aloud. The pipeline cleans the audio (**Silero VAD**), transcrib
 - Classes, assignments and deadlines
 - **Anki-style flashcards**, a reading game, free speech (beta), light gamification
 - Magic-link login, encrypted daily backups with tested restores, automated deploys
+- 53 database migrations so far, applied to the live app without losing anyone's work
+
+## Oral assessment
+Students record a spoken exam in the app, up to 10 minutes, or the teacher uploads the audio. The platform transcribes it and measures pronunciation and fluency. Deterministic scripts and the teacher's own AI (over MCP) propose a score for each rubric criterion, quoting the transcript as evidence.
+
+- A proposed score counts only after the teacher accepts it.
+- It also works for exams held outside the platform: the teacher uploads the audio and enrolls the student on the spot.
 
 ## Teachers bring their own AI
 What I'm proudest of: teachers connect *their* AI (Claude, ChatGPT…) through an **MCP server I wrote**. It reads the format guide, checks the lesson with the same validator as the UI and saves a **draft**.
